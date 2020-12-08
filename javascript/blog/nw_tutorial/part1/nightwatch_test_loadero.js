@@ -9,6 +9,6 @@ function(client) {
         .assert.containsText('.repo-list li:nth-of-type(1) div.f4 a', 'nightwatchjs')
         .click('.repo-list li:nth-of-type(1) div.f4 a')
         .waitForElementVisible('.application-main', 10 * 1000)
-        .takeScreenshot('nightwathcRepo.png');
+        .takeScreenshot('nightwatchRepo.png');
 }
  
