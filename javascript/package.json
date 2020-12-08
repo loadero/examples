@@ -1,0 +1,25 @@
+{
+  "name": "js_examples",
+  "version": "1.0.0",
+  "description": "Loadero JS and Nightwatch.js test script examples",
+  "scripts": {
+    "test": "nightwatch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/loadero/examples.git"
+  },
+  "author": "Loadero",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/loadero/examples/issues"
+  },
+  "homepage": "https://github.com/loadero/examples#readme",
+  "dependencies": {
+    "chromedriver": "87.0.2",
+    "nightwatch": "1.5.1"
+  },
+  "devDependencies": {
+    "geckodriver": "^1.21.0"
+  }
+}

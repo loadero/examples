@@ -1,0 +1,11 @@
+# Logs
+*.log
+
+# Output
+tests_output/
+*.png
+*.jpg
+*.jpeg
+
+# Dependency directories
+node_modules/
