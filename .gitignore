@@ -9,3 +9,6 @@ tests_output/
 
 # Dependency directories
 node_modules/
+
+# Miscellaneous
+.DS_store
