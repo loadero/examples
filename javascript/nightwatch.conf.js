@@ -14,7 +14,9 @@ module.exports = {
         },
 
         firefox: {
-            browserName: 'firefox',
+            desiredCapabilities: {
+                browserName: 'firefox'
+            },
             webdriver: { server_path: require('geckodriver').path }
         }
     }
