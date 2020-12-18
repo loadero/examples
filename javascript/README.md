@@ -22,7 +22,7 @@ original article so you can find more detailed explanation about it.
 
 Download NPM dependencies with the following command
 
-```
+```bash
 npm install
 ```
 
@@ -30,19 +30,19 @@ npm install
 
 To run all tests inside `tests` folder, enter
 
-```
+```bash
 npm test
 ```
 
 To run a specfic tests, enter
 
-```
+```bash
 npm test -- -t PATH_TO_FILE
 ```
 
 If you want to run your tests in a different browser (default is Google Chrome),
 then specify environment with the following command:
 
-```
+```bash
 npm test -- -e ENVIRONMENT
 ```
