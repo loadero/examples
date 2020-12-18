@@ -9,7 +9,7 @@ Examples are divided into 2 groups:
   [Nightwatch.js](https://github.com/nightwatchjs/nightwatch) test scripts
 - `java` - Java + [TestUI](https://github.com/testdevlab/TestUI) test scripts
 
-Change current active directory and follow execution instructions as per that
+Head to the language-specific example directory and follow execution instructions as per that
 directory's `README.md`.
 
 For any questions, contact [Loadero support](mailto:support@loadero.com)
