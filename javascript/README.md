@@ -4,8 +4,7 @@ Here you can find various Loadero JavaScript test script examples.
 
 Scripts are saved under `tests` directory where they are divided based on the
 script theme, for example, if you need examples for scripts from Nightwatch
-tutorial blog series, check `nw_tutorial` folder. Each script also references
-original article so you can find more detailed explanation about it.
+tutorial blog series, check `nw_tutorial` directory.
 
 ## Setup
 
@@ -28,7 +27,7 @@ npm install
 
 ## Test execution
 
-To run all tests inside `tests` folder, enter
+To run all tests inside `tests` directory, enter
 
 ```bash
 npm test
