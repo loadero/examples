@@ -1,4 +1,4 @@
-// Original article https://blog.loadero.com/
+// Original article https://blog.loadero.com/2020/12/18/a-beginners-guide-to-test-automation-with-javascriptnightwatch-js-part-1/
 
 module.exports = {
     test: client => {
