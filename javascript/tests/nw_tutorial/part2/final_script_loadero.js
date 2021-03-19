@@ -1,4 +1,4 @@
-// Original article BLOG_POST_URL
+// Original article https://blog.loadero.com/2021/03/19/a-beginners-guide-to-test-automation-with-javascriptnightwatch-js-part-2/
 
 client => {
     client
