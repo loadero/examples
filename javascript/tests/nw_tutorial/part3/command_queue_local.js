@@ -1,4 +1,4 @@
-// Original article <url>
+// Original article https://blog.loadero.com/2021/06/22/a-beginners-guide-to-test-automation-with-javascriptnightwatch-js-part-3
 
 module.exports = {
     test: client => {
@@ -18,4 +18,3 @@ module.exports = {
         console.log('second');
     }
 };
-
