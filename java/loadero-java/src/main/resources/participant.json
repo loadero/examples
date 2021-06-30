@@ -1,0 +1,9 @@
+{
+  "title": "participant1",
+  "count": 2,
+  "compute_unit": "g1",
+  "browser": "chromeLatest",
+  "location": "us-west-2",
+  "network": "3g",
+  "media_type": "default"
+}

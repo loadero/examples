@@ -1,0 +1,8 @@
+{
+  "title": "somename",
+  "test_mode": "load",
+  "increment_strategy": "linear",
+  "start_interval": "00:00:20",
+  "participant_timeout": "00:03:20",
+  "script_path": "src/main/resources/script.js"
+}
