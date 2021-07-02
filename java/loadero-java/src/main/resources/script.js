@@ -1,4 +1,3 @@
-client.useCss();
 client => {
     // Example of locating elements using CSS selectors
     client
