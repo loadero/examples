@@ -2,7 +2,7 @@
 
 module.exports = {
     test: client => {
-        // Element selectors boject
+        // Element selectors object
         const selectors = {
             prepare: {
                 container: '.application-main',
