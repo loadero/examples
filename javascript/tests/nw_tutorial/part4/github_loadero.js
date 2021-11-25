@@ -9,7 +9,7 @@ client => {
 
     // Element selectors object
     const selectors = {
-        prepare: {
+        landing: {
             container: '.application-main',
             signInButton: '[href="/login"]'
         },
@@ -38,11 +38,11 @@ client => {
 
     // Main functions
     const prepare = () => {
-        const { prepare } = selectors;
+        const { landing } = selectors;
 
-        client.url(url).waitForElementVisible(prepare.container, timeout);
+        client.url(url).waitForElementVisible(landing.container, timeout);
 
-        waitAndClick(prepare.signInButton);
+        waitAndClick(landing.signInButton);
     };
 
     const login = () => {
