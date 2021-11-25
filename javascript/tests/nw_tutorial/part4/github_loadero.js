@@ -1,6 +1,12 @@
 // Original article https://blog.loadero.com/2021/11/23/a-beginners-guide-to-test-automation-with-javascriptnightwatch-js-part-4/
 
 client => {
+    // GitHub's URL
+    const url = 'https://github.com/';
+
+    // Default timeout for `.waitForElementVisible()`
+    const timeout = 10 * 1000;
+
     // Element selectors object
     const selectors = {
         prepare: {
@@ -15,12 +21,18 @@ client => {
         }
     };
 
+    // Account credentials
+    const credentials = {
+        email: 'test@example.com',
+        password: 'password123'
+    };
+
     // Utility functions
-    const waitAndClick = (selector, waitTime = 10 * 1000) => {
+    const waitAndClick = (selector, waitTime = timeout) => {
         client.waitForElementVisible(selector, waitTime).click(selector);
     };
 
-    const waitAndSetValue = (selector, value, waitTime = 10 * 1000) => {
+    const waitAndSetValue = (selector, value, waitTime = timeout) => {
         client.waitForElementVisible(selector, waitTime).setValue(selector, value);
     };
 
@@ -28,7 +40,7 @@ client => {
     const prepare = () => {
         const { prepare } = selectors;
 
-        client.url('https://github.com/').waitForElementVisible(prepare.container, 10 * 1000);
+        client.url(url).waitForElementVisible(prepare.container, timeout);
 
         waitAndClick(prepare.signInButton);
     };
@@ -36,10 +48,10 @@ client => {
     const login = () => {
         const { signIn } = selectors;
 
-        client.waitForElementVisible(signIn.container, 10 * 1000);
+        client.waitForElementVisible(signIn.container, timeout);
 
-        waitAndSetValue(signIn.loginInput, 'test@example.com');
-        waitAndSetValue(signIn.passwordInput, 'password123');
+        waitAndSetValue(signIn.loginInput, credentials.email);
+        waitAndSetValue(signIn.passwordInput, credentials.password);
 
         waitAndClick(signIn.signInButton);
     };
