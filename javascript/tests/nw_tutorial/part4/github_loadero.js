@@ -1,7 +1,7 @@
 // Original article https://blog.loadero.com/2021/11/23/a-beginners-guide-to-test-automation-with-javascriptnightwatch-js-part-4/
 
 client => {
-    // Element selectors boject
+    // Element selectors object
     const selectors = {
         prepare: {
             container: '.application-main',
