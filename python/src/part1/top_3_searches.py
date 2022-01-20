@@ -35,7 +35,7 @@ def top_search_results(
         )
 
         for i in range(3):
-            # Creates a css selector that indicates to the search result title.
+            # Creates a CSS selector that indicates the search result title.
             selector = f"#r1-{i} > div > h2 > a.result__a"
 
             # Locates the search element and verifies that it is present.
