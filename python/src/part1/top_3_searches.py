@@ -53,7 +53,7 @@ def top_search_results(
     home_page_search_bar = "#search_form_input_homepage"
     home_page_search_button = "#search_button_homepage"
 
-    # Opens the search engine duckduckgo.
+    # Opens the search engine DuckDuckGo.
     driver.navigate_to("https://duckduckgo.com/")
 
     # Locates search bar, wait for the element to load and sends search query
