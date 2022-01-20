@@ -16,7 +16,7 @@ def top_search_results(
         search_bar = "#search_form_input"
         search_button = "#search_button"
 
-        # Locates search bar element and verifies that it is present.
+        # Locates search bar element and verifies that it is visible.
         search_bar_element = driver.e(
             "css", search_bar
         ).wait_until_visible()
