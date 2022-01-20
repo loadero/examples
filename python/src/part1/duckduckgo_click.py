@@ -3,7 +3,7 @@ def test_on_loadero(driver: TestUIDriver) -> None:
     # google.com
     driver.navigate_to("https://duckduckgo.com/?q=google.com")
 
-    # Locates a element with a css selector that is pointing to the first
+    # Locates an element with a CSS selector that is pointing to the first
     # search results title, waits for the element to become visible and clicks
     # on it.
     driver.e("css", "#r1-0 > div > h2").wait_until_visible().click()

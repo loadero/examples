@@ -27,9 +27,9 @@ def top_search_results(driver: TestUIDriver, search_query: str, n: int) -> str:
 
     result = f"Top {n} DuckDuckGo search results for {search_query} ->\n"
 
-    # Iterates over top 3 search results
+    # Iterates over top n search results
     for i in range(n):
-        # Creates a css selector that indicates to the search result title.
+        # Creates a CSS selector that indicates to the search result title.
         selector = f"#r1-{i} > div > h2 > a.result__a"
 
         # Locates the search element and verifies that it is present.
