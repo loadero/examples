@@ -32,7 +32,7 @@ def top_search_results(driver: TestUIDriver, search_query: str, n: int) -> str:
         # Creates a CSS selector that indicates to the search result title.
         selector = f"#r1-{i} > div > h2 > a.result__a"
 
-        # Locates the search element and verifies that it is present.
+        # Locates the search element and verifies that it is visible.
         search_result_element = driver.e("css", selector).wait_until_visible()
 
         # Retrives the title of search result and adds it to result string.
