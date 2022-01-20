@@ -1,3 +1,7 @@
+# Original article
+# https://blog.loadero.com/2022/01/20/test-automation-with-python/
+
+
 def test_on_loadero(driver: TestUIDriver) -> None:
     # The main logic of the test is in top_search_results function
     print(top_search_results(driver, "loadero", 10))

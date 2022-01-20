@@ -1,3 +1,7 @@
+# Original article
+# https://blog.loadero.com/2022/01/20/test-automation-with-python/
+
+
 def test_on_loadero(driver: TestUIDriver) -> None:
     # Opens the search engine DuckDuckGo with default search query of
     # google.com
