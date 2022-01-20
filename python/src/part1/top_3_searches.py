@@ -56,7 +56,7 @@ def top_search_results(
     # Opens the search engine DuckDuckGo.
     driver.navigate_to("https://duckduckgo.com/")
 
-    # Locates search bar, wait for the element to load and sends search query
+    # Locates search bar, waits for the element to load and sends a search query
     # to it
     driver.e(
         "css", home_page_search_bar
