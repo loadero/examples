@@ -1,5 +1,5 @@
 def test_on_loadero(driver: TestUIDriver) -> None:
-    # Opens the search engine duckduck go with default search query of
+    # Opens the search engine DuckDuckGo with default search query of
     # google.com
     driver.navigate_to(
         "https://duckduckgo.com/?q=google.com"
