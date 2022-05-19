@@ -1,4 +1,4 @@
-# simple_test.py
+# Original article https://blog.loadero.com/2022/05/19/local-tests-with-selenium-and-python-browser-automation/
 
 import time
 from testui.support.appium_driver import NewDriver

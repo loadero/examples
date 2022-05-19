@@ -1,4 +1,4 @@
-# loadero_script.py
+# Original article https://blog.loadero.com/2022/05/19/local-tests-with-selenium-and-python-browser-automation/
 
 import pytest
 import time
