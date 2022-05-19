@@ -16,7 +16,9 @@ def driver() -> TestUIDriver:
     )
     
     print("starting test script execution")
+
     yield driver
+
     print("test script execution finished")
 
     driver.quit()
