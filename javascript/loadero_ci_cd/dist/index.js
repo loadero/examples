@@ -6818,13 +6818,13 @@ function fixResponseChunkedTransferBadEnding(request, errorCallback) {
 // Loadero API base URL
 const BASE_URL = 'https://api.loadero.com/v2/projects';
 // The ID of the project we are working with
-const PROJECT_ID = process.argv[3];
+const PROJECT_ID = process.env.PROJECT_ID;
 // The ID of the test we want to run
-const TEST_ID = process.argv[4];
+const TEST_ID = process.env.TEST_ID;
 // Request options with authorization header
 const OPTIONS = {
     headers: {
-        Authorization: `LoaderoAuth ${process.argv[2]}`
+        Authorization: `LoaderoAuth ${process.env.ACCESS_TOKEN}`
     }
 };
 
