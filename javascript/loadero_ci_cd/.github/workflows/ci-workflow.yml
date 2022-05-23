@@ -6,6 +6,8 @@ on:
   pull_request:
     branches: [master]
 
+  workflow_dispatch:
+
 jobs:
   loadero-test:
     runs-on: ubuntu-latest
