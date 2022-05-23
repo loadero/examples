@@ -1,6 +1,0 @@
-name: "Loadero test"
-description: "Runs Loadero test"
-author: "Loadero"
-runs:
-  using: "node12"
-  main: "loadero-action/dist/index.js ${{ secrets.ACCESS_TOKEN }}${{ secrets.PROJECT_ID }} ${{ secrets.TEST_ID }}"

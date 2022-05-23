@@ -122,3 +122,4 @@ tests_output/
 *.png
 *.jpg
 *.jpeg
+!javascript/loadero_ci_cd/dist
