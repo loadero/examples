@@ -1,11 +1,11 @@
 name: Example CI
 
-on:
-  workflow_dispatch:
+on: workflow_dispatch
 
 jobs:
   loadero-test:
     runs-on: ubuntu-latest
+
     steps:
       - name: "Check out"
         uses: actions/checkout@v3
