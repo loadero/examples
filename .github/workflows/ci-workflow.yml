@@ -19,7 +19,9 @@ jobs:
           distribution: "temurin"
           cache: "gradle"
       - name: "Run Loadero test"
-        run: ./ci/gradlew run
+        run: |
+          cd ./ci
+          ./gradlew run
         env:
           ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
           PROJECT_ID: ${{ secrets.PROJECT_ID }}
