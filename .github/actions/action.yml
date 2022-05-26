@@ -1,7 +1,0 @@
-name: "Execute Loadero test"
-description:
-  "Run predefined Loadero test and wait until the test run is completed"
-author: "Loadero"
-runs:
-  using: "node12"
-  main: "javascript/loadero-action/dist/index.js"
