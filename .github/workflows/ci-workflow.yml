@@ -12,8 +12,16 @@ jobs:
   loadero-test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: ./
+      - name: "Check out"
+        uses: actions/checkout@v3
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: 17
+          distribution: "temurin"
+          cache: "gradle"
+      - name: "Run Loadero test"
+        run: ./gradlew run
         env:
           ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
           PROJECT_ID: ${{ secrets.PROJECT_ID }}

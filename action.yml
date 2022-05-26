@@ -1,6 +1,0 @@
-name: "Loadero test"
-description: "Runs Loadero test"
-author: "Loadero"
-runs:
-  using: "node12"
-  main: "javascript/loadero-action/dist/index.js"
