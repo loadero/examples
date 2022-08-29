@@ -11,11 +11,13 @@ public void testUIWithLoadero() {
 
     //get text of today's article
     String text = todaysArticle.getText();
-    System.out.printf("Todays featured article is:\n %s", text);
+    System.out.printf("Todays featured article is:\n %s\n", text);
+
     // input text in search input field
     searchInput.waitFor(10).untilIsVisible().sendKeys("Selenium Webdriver");
     searchButton.click();
     // alternative: searchInput.sendKeys(Keys.ENTER);
+
     //take a screenshot
     pageContainer.waitFor(10).untilIsVisible().saveScreenshot("screenshot.png");
 

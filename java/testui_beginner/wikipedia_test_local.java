@@ -2,17 +2,13 @@ import static testUI.UIOpen.open;
 import static testUI.Utils.By.byCssSelector;
 import static testUI.Utils.By.byId;
 import static testUI.elements.TestUI.E;
+import static testUI.collections.TestUI.EE;
 
 import testUI.collections.UICollection;
 import testUI.elements.UIElement;
-
-import static testUI.collections.TestUI.EE;
-
-
 import org.junit.Test;
 
 public class Wikipedia {
-
     @Test
     public void test() {
 
@@ -25,13 +21,16 @@ public class Wikipedia {
         //open url and wait until page container is visible
         open("https://en.wikipedia.org/wiki/Main_Page");
         pageContainer.waitFor(10).untilIsVisible();
+
         //get text of today's article
         String text = todaysArticle.getText();
-        System.out.printf("Todays featured article is:\n %s", text);
+        System.out.printf("Todays featured article is:\n %s\n", text);
+
         // input text in search input field
         searchInput.waitFor(10).untilIsVisible().sendKeys("Selenium Webdriver");
         searchButton.click();
         // alternative: searchInput.sendKeys(Keys.ENTER);
+
         //take a screenshot
         pageContainer.waitFor(10).untilIsVisible().saveScreenshot("screenshot.png");
 
@@ -41,6 +40,6 @@ public class Wikipedia {
         System.out.printf("First result is:\n%s\n", firstResult);
 
         String anotherResult = collection.findByText("IT").getText();
-        System.out.printf("Result containing 'IT' is:\n%s", anotherResult);
+        System.out.printf("Result containing 'IT' is:\n%s\n", anotherResult);
     }
 }
