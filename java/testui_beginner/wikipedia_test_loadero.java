@@ -8,6 +8,7 @@ public void testUIWithLoadero() {
     //open url and wait until page container is visible
     open("https://en.wikipedia.org/wiki/Main_Page");
     pageContainer.waitFor(10).untilIsVisible();
+
     //get text of today's article
     String text = todaysArticle.getText();
     System.out.printf("Todays featured article is:\n %s", text);
