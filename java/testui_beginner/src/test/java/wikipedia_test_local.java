@@ -24,7 +24,7 @@ public class Wikipedia {
 
         //get text of today's article
         String text = todaysArticle.getText();
-        System.out.printf("Todays featured article is:\n %s\n", text);
+        System.out.printf("Todays featured article is:\n %s", text);
 
         // input text in search input field
         searchInput.waitFor(10).untilIsVisible().sendKeys("Selenium Webdriver");
@@ -40,6 +40,6 @@ public class Wikipedia {
         System.out.printf("First result is:\n%s\n", firstResult);
 
         String anotherResult = collection.findByText("IT").getText();
-        System.out.printf("Result containing 'IT' is:\n%s\n", anotherResult);
+        System.out.printf("Result containing 'IT' is:\n%s", anotherResult);
     }
 }

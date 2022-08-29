@@ -11,7 +11,7 @@ public void testUIWithLoadero() {
 
     //get text of today's article
     String text = todaysArticle.getText();
-    System.out.printf("Todays featured article is:\n %s\n", text);
+    System.out.printf("Todays featured article is:\n %s", text);
 
     // input text in search input field
     searchInput.waitFor(10).untilIsVisible().sendKeys("Selenium Webdriver");
