@@ -37,9 +37,6 @@ public class Wikipedia {
         //save all search results titles in a `collection`
         UICollection collection = EE(byCssSelector(".mw-search-result-heading"));
         String firstResult = collection.first().getText();
-        System.out.printf("First result is:\n%s\n", firstResult);
-
-        String anotherResult = collection.findByText("IT").getText();
-        System.out.printf("Result containing 'IT' is:\n%s", anotherResult);
+        System.out.printf("First result is:\n%s", firstResult);
     }
 }
