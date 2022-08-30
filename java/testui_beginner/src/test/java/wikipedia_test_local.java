@@ -11,6 +11,8 @@ import org.junit.Test;
 public class Wikipedia {
     @Test
     public void test() {
+        // Original article https://blog.loadero.com/2022/08/30/beginners-guide-to-test-automation-with-java-testui/
+
         // HTML elements that will be used
         UIElement searchInput = E(byCssSelector("input#searchInput"));
         UIElement searchButton = E(byId("searchButton"));
@@ -23,7 +25,7 @@ public class Wikipedia {
 
         // get text of today's article
         String text = todaysArticle.getText();
-        System.out.printf("Todays featured article is:\n %s\n", text);
+        System.out.printf("Todays featured article is:\n%s\n", text);
 
         // input text in search input field
         searchInput.waitFor(10).untilIsVisible().sendKeys("Selenium Webdriver");

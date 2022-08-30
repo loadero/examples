@@ -14,6 +14,7 @@
     <maven.compiler.target>11</maven.compiler.target>
     <junit.jupiter.version>5.7.2</junit.jupiter.version>
     <maven.surefire.version>3.0.0-M5</maven.surefire.version>
+    <testui.version>1.2.10</testui.version>
   </properties>
 
   <repositories>
@@ -39,6 +40,12 @@
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
       <version>${junit.jupiter.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.github.testdevlab</groupId>
+      <artifactId>TestUI</artifactId>
+      <version>${testui.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
