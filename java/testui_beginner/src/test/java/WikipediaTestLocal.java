@@ -6,9 +6,9 @@ import static testUI.collections.TestUI.EE;
 
 import testUI.collections.UICollection;
 import testUI.elements.UIElement;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class Wikipedia {
+public class WikipediaTestLocal {
     @Test
     public void test() {
         // Original article https://blog.loadero.com/2022/08/30/beginners-guide-to-test-automation-with-java-testui/
