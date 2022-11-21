@@ -22,7 +22,7 @@ jobs:
           base: ${{ github.ref }}
           filters: |
             test-configs:
-              - 'examples/python/src/loadero_python_showcase/configs/**'
+              - 'python/src/loadero_python_showcase/configs/**'
   
   update-tests:
     needs: check-changes
