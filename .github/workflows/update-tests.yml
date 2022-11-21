@@ -38,7 +38,7 @@ jobs:
       - name: "Update Loadero tests"
         run: |
           cd ./python/src/loadero_python_showcase
-          python update_tests.py
+          python update.py
         env:
           LOADERO_ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
           LOADERO_PROJECT_ID: ${{ secrets.PROJECT_ID }}
