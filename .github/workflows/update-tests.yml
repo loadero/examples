@@ -1,0 +1,33 @@
+name: Update Loadero tests in a project
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+jobs:
+  check-changes:
+    runs-on: ubuntu-latest
+
+    outputs:
+      test-configs: ${{ steps.filter.outputs.test-configs }}
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          base: ${{ github.ref }}
+          filters: |
+            test-configs:
+              - 'examples/python/src/loadero_python_showcase/configs/**'
+  
+  update-tests:
+    needs: check-changes
+    if: ${{ needs.check-changes.outputs.test-configs == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: echo "hello"

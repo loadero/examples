@@ -1,0 +1,63 @@
+[
+  {
+    "id": 17705,
+    "name": "version controlled test",
+    "start_interval": 5,
+    "participant_timeout": 600,
+    "mode": "load",
+    "increment_strategy": "random",
+    "script": "(client) => {\n  console.log(\"hello world\");\n};\n",
+    "created": "2022-11-19 09:50:08+00:00",
+    "updated": "2022-11-20 20:19:38+00:00",
+    "script_file_id": 173039,
+    "group_count": 4,
+    "participant_count": 16,
+    "script_filepath": "configs/test_17705_script",
+    "groups": [
+      {
+        "id": 61827,
+        "name": "group",
+        "count": 4,
+        "test_id": 17705,
+        "total_cu_count": 4,
+        "participant_count": 4,
+        "created": "2022-11-19 09:50:22+00:00",
+        "updated": "2022-11-19 09:50:22+00:00",
+        "participants": [
+          {
+            "id": 123366,
+            "test_id": 17705,
+            "name": "participant",
+            "count": 2,
+            "compute_unit": "g1",
+            "group_id": 61827,
+            "record_audio": false,
+            "audio_feed": "default",
+            "browser": "chromeLatest",
+            "location": "us-west-2",
+            "network": "default",
+            "video_feed": "default",
+            "created": "2022-11-19 09:50:48+00:00",
+            "updated": "2022-11-19 09:50:48+00:00"
+          },
+          {
+            "id": 123367,
+            "test_id": 17705,
+            "name": "participant",
+            "count": 2,
+            "compute_unit": "g1",
+            "group_id": 61827,
+            "record_audio": false,
+            "audio_feed": "default",
+            "browser": "firefoxLatest",
+            "location": "us-west-2",
+            "network": "default",
+            "video_feed": "default",
+            "created": "2022-11-19 09:50:58+00:00",
+            "updated": "2022-11-19 09:51:10+00:00"
+          }
+        ]
+      }
+    ]
+  }
+]
