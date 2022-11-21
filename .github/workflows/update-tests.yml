@@ -35,3 +35,10 @@ jobs:
         with:
           python-version: '3.10' 
       - run: pip install loadero-python
+      - name: "Update Loadero tests"
+        run: |
+          cd ./python/src/loadero_python_showcase
+          python update_tests.py
+        env:
+          LOADERO_ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+          LOADERO_PROJECT_ID: ${{ secrets.PROJECT_ID }}
