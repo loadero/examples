@@ -1,8 +1,11 @@
 name: Run Loadero test
 
 on:
+  push:
+    branches:
+      - main
+      - master
   workflow_dispatch:
-  pull_request:
 
 jobs:
   run-test:

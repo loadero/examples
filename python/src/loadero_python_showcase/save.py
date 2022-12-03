@@ -18,9 +18,9 @@ APIClient(
 )
 
 tests = []
-for test in Project().tests()[0]:
+for test_idx, test in enumerate(Project().tests()[0]):
     test.params.script.read()
-    script_filepath = f"configs/test_{test.params.test_id}_script"
+    script_filepath = f"configs/test_script_{test_idx}"
     with open(script_filepath, "w") as f:
         f.write(test.params.script.content)
 
