@@ -6,13 +6,13 @@
     "participant_timeout": 600,
     "mode": "load",
     "increment_strategy": "random",
-    "script": "(client) => {\n  console.log(\"hello world\");\n};\n",
+    "script": "(client) => {\n  console.log(\"hello world my fellow scripters\");\n};\n",
     "created": "2022-11-19 09:50:08+00:00",
     "updated": "2022-11-20 20:19:38+00:00",
     "script_file_id": 173039,
     "group_count": 4,
     "participant_count": 16,
-    "script_filepath": "configs/test_17705_script",
+    "script_filepath": "configs/test_script_1",
     "groups": [
       {
         "id": 61827,
@@ -38,7 +38,7 @@
             "network": "default",
             "video_feed": "default",
             "created": "2022-11-19 09:50:48+00:00",
-            "updated": "2022-11-19 09:50:48+00:00"
+            "updated": "2022-11-21 21:59:30+00:00"
           },
           {
             "id": 123367,
@@ -54,7 +54,7 @@
             "network": "default",
             "video_feed": "default",
             "created": "2022-11-19 09:50:58+00:00",
-            "updated": "2022-11-19 09:51:10+00:00"
+            "updated": "2022-11-21 21:59:30+00:00"
           }
         ]
       }

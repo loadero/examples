@@ -1,3 +1,0 @@
-(client) => {
-  console.log("hello world");
-};
