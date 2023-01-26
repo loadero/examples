@@ -20,7 +20,7 @@ def send_notification(message):
     requests.post(
         "https://discordapp.com/api/webhooks/{id}",
         data={"content": message},
-        )
+    )
 
 
 if __name__ == "__main__":
