@@ -1,8 +1,10 @@
 name: Notify about failing tests in Loadero
 
 on:
-  schedule:
-    - cron:  '0 9-18 * * *'
+  # The schedule is commented to not trigger the pipeline
+  # since there is no reason to run the example endlessly
+  # schedule:
+    # - cron:  '0 9-18 * * *'
   workflow_dispatch:
 
 jobs:
