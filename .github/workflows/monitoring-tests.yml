@@ -1,0 +1,24 @@
+name: Notify about failing tests in Loadero
+
+on:
+  # The schedule is commented to not trigger the pipeline
+  # since there is no reason to run the example endlessly
+  # schedule:
+    # - cron:  '0 9-18 * * *'
+  workflow_dispatch:
+
+jobs:
+  notify-on-fail:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+      - run: pip install loadero-python
+      - run: pip install requests
+      - run: python run.py
+        env:
+          LOADERO_ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+          LOADERO_PROJECT_ID: ${{ secrets.PROJECT_ID }}
+          LOADERO_TEST_ID: ${{ secrets.TEST_ID }}
