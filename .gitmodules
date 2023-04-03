@@ -1,0 +1,6 @@
+[submodule "python/src/loadero_python_library_usage"]
+	path = python/src/loadero_python_library_usage
+	url = https://code.tdlbox.com/teodora.jovcheska/loadero.git
+[submodule "python/src/loadero_parallel_local_tests"]
+	path = python/src/loadero_parallel_local_tests
+	url = https://code.tdlbox.com/teodora.jovcheska/loaderolocal.git
