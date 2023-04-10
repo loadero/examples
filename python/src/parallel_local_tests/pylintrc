@@ -1,0 +1,14 @@
+[FORMAT]
+max-line-length=120
+[MASTER]
+init-hook='import sys; sys.path.append(".")'
+disable=
+    C0114, # missing-module-docstring
+    R0903, # too-few-public-methods
+    W0107, # unnecessary-pass
+    W0621, # redefined-outer-name
+    R0913, # too-many-arguments
+    W0703, # broad-except
+    C0103, # invalid-name
+[TYPECHECK]
+ignored-modules = netifaces
