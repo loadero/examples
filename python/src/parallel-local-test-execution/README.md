@@ -1,8 +1,10 @@
-# Py-TestUI test scripts
+# Parallel local test execution
 
 ## Prerequisites
 
-- Change active directory to `scripts/python` and follow instructions
+- Note: The following set up refers to Mac OS.
+
+- Change active directory to `python/src/parallel-local-test-execution` and follow the instructions
 
 - Install chromedriver (check if installed with `chromedriver -v`)
 
@@ -10,7 +12,7 @@
   brew install chromedriver geckodriver
   ```
 
-- Install Python
+- Install Python (v3.9.10 used)
 
   ```
   brew install python
@@ -19,7 +21,7 @@
 - Create virtual environment
 
   ```
-  python3 -m venv venv
+  python -m venv venv
   ```
 
 - Activate virtual enviornment
@@ -31,7 +33,7 @@
 - Install depenendencies
 
   ```bash
-  pip3 install -r requirements.txt
+  pip install -r requirements.txt
   ```
 
 - When done modifying virtual environment, leave it
@@ -41,19 +43,19 @@
 
 ## Run tests
 
-- Use the following to execute your tests:
+- Use the following command to execute your test:
 
   ```
-  ./venv/bin/pytest ./src/{FILE_NAME}.py -s -m loaderotest
+  ./venv/bin/pytest ./src/test_on_loadero.py -s -m demotest
   ```
 
-- Use the following to execute your tests (venv is already activated):
+- Use the following command to execute your test (venv is already activated):
 
   ```
-  pytest -s ./src/{FILE_NAME}.py -m loaderotest
+  pytest -s ./src/test_on_loadero.py -m demotest
   ```
 
-- Use the following to execute your tests with parametars (venv is already activated):
+- Use the following command to execute your test with parameters (venv is already activated):
 
   ```
   export NUMBER_OF_PARTICIPANTS={NUMBER_OF_PARTICIPANTS}
@@ -61,22 +63,8 @@
   pytest -s ./src/{FILENAME}.py -m loaderotest
   ```
 
-## Docker
-
-- Build image from Dockerfile
-
-  ```
-  docker build -t {IMAGE_NAME} .
-  ```
-
-- Run image from Dockerfile 
-
-  ```
-  docker run -it {IMAGE_NAME}
-  ```
-
-- Run image from Dockerfile with parametars
-
-  ```
-  docker run -it -e NUMBER_OF_PARTICIPANTS='{NUMBER_OF_PARTICIPANTS}' -e SELENIUM_REMOTE_URL='{SELENIUM_REMOTE_URL}' {IMAGE_NAME}
-  ```
+## Test scenario
+- NUMBER_OF_PARTICIPANTS participants navigate to https://janus.conf.meetecho.com/videoroomtest.html
+- NUMBER_OF_PARTICIPANTS participants join the room
+- NUMBER_OF_PARTICIPANTS participants stay in the room for 2 minutes
+- NUMBER_OF_PARTICIPANTS participants leave the room

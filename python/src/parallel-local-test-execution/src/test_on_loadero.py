@@ -1,8 +1,8 @@
 import os
+import pytest
 import sys
 import time
 
-import pytest
 from selenium.webdriver.chrome.options import Options
 from testui.support.appium_driver import NewDriver
 from testui.support.testui_driver import TestUIDriver
@@ -110,14 +110,15 @@ def test_on_loadero(driver: TestUIDriver) -> None:
             threads.append(t)
             print('Created thread: ', participant.participant_id)
             t.start()
-        fail = False
+        num_failed = 0
         for t in threads:
             status = t.join()
             print(f'Finished thread: {participant.participant_id} With code: {status}')
             if status != 0:
-                fail = True
-        if fail is True:
-            raise Exception('One of the participants failed')
+                num_failed += 1
+
+        if num_failed > 0:
+            raise Exception(f'{num_failed} participants failed')
 
     except Exception as main_exception:
         print(f'Exception Handled in Main, Details of the Exception: {main_exception}')
