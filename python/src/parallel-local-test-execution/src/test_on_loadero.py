@@ -103,15 +103,16 @@ def test_on_loadero(driver: TestUIDriver) -> None:
     """
     try:
         threads = []
-        participant.participant_id = GLOBALS[0]
-        for d in driver:
-            participant.participant_id += 1
-            t = ThreadWithReturnValue(target=test, args=(d, participant.participant_id, ))
+        participants = []
+        for p_id, d in enumerate(driver):
+            p = Participant(GLOBALS[p_id])
+            participants.append(p)
+            t = ThreadWithReturnValue(target=test, args=(d, participant.participant_id))
             threads.append(t)
             print('Created thread: ', participant.participant_id)
             t.start()
         num_failed = 0
-        for t in threads:
+        for t, p in zip(threads, participants):
             status = t.join()
             print(f'Finished thread: {participant.participant_id} With code: {status}')
             if status != 0:
