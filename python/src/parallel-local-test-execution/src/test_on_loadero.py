@@ -87,7 +87,7 @@ def driver() -> TestUIDriver:
         participant_driver.quit()
 
 # Parallel test execution
-@pytest.mark.demotest
+@pytest.mark.loaderotest
 def test_on_loadero(driver: TestUIDriver) -> None:
     """Test function that runs Loadero tests for each participant.
 
@@ -107,14 +107,14 @@ def test_on_loadero(driver: TestUIDriver) -> None:
         for p_id, d in enumerate(driver):
             p = Participant(GLOBALS[p_id])
             participants.append(p)
-            t = ThreadWithReturnValue(target=test, args=(d, participant.participant_id))
+            t = ThreadWithReturnValue(target=test, args=(d, p.participant_id))
             threads.append(t)
-            print('Created thread: ', participant.participant_id)
+            print('Created thread: ', p.participant_id)
             t.start()
         num_failed = 0
         for t, p in zip(threads, participants):
             status = t.join()
-            print(f'Finished thread: {participant.participant_id} With code: {status}')
+            print(f'Finished thread: {p.participant_id} With code: {status}')
             if status != 0:
                 num_failed += 1
 
