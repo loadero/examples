@@ -87,7 +87,7 @@ def driver() -> TestUIDriver:
         participant_driver.quit()
 
 # Parallel test execution
-@pytest.mark.loaderotest
+@pytest.mark.demotest
 def test_on_loadero(driver: TestUIDriver) -> None:
     """Test function that runs Loadero tests for each participant.
 
@@ -165,5 +165,4 @@ def test(driver, participant_id):
         time.sleep(interval)  # 60s
         # disconect
         driver.e('css', '#start').wait_until_visible(element_timeout).click()
-    pass
     return 0
