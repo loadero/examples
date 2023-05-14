@@ -1,0 +1,22 @@
+[FORMAT]
+max-line-length=120
+[MASTER]
+init-hook='import sys; sys.path.append(".")'
+disable=
+    C0103, # invalid-name
+    C0114, # missing-module-docstring
+    C0115, # missing-class-docstring)
+    C0116, # missing-function-docstring
+    R1710, # all return statements should return an expression
+    R0915, # too many statements
+    R1702, # too many nested blocks
+    R0914, # too many local variables
+    R1722, # consider-using-sys-exit
+    R0801, # Similar lines in 3 files
+    R0903, # too-few-public-methods
+    W0511, # TO DO (fix me)
+    W0631, # Undefined loop variable
+    R0912, # Too many branches
+    R0904, # Too many public methods
+[TYPECHECK]
+ignored-modules = netifaces
