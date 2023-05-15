@@ -15,7 +15,6 @@ def create_suites(obj, suites, args_suite, test_ids, args_overwrite_suite):
         dict: Suites dictionary
     """
     logger = obj['logger']
-    local_manager = obj['local_manager']
 
     new_suites = {}
     for suite in suites:
@@ -43,10 +42,7 @@ def create_suites(obj, suites, args_suite, test_ids, args_overwrite_suite):
                 new_suites[args_suite] = {"test_ids": test_ids}
             # Suite, test ids, overwrite suite False
             elif args_suite and test_ids:
-                local_project_id = int(local_manager.project_id)
-                local_project_name = local_manager.get_project_name_from_test_cases(local_project_id)
-                test_ids_conf = local_manager.read_project_from_file(local_project_id, local_project_name)[
-                    "manager_config"]["suites"][args_suite]["test_ids"]
+                test_ids_conf = validate_suites(obj, suites, args_suite)
                 # New test ids list with no duplicates
                 new_test_ids = list(set(test_ids_conf + test_ids))
                 new_suites[args_suite] = {"test_ids": new_test_ids}
@@ -72,7 +68,7 @@ def validate_suites(obj, suites, args_suite):
 
     # Suites is empty
     if not suites:
-        logger.critical(f"There is no {args_suite} suite!")
+        logger.critical(f"There is no {args_suite} suite. Action denied!")
     # Suites is not empty
     else:
         # Suite is empty
@@ -164,8 +160,7 @@ def backup_handler(obj, loadero_test_ids, args_suite, args_test_ids, args_overwr
                 local_manager.write_project_to_file(local_project_name, new_suites)
 
                 if len(test_ids_conf) != 0:
-                    test_ids = local_manager.validate_cli_test_ids(
-                    loadero_test_ids, list(set(test_ids_conf + args_test_ids)))
+                    test_ids = local_manager.validate_cli_test_ids(loadero_test_ids, list(set(test_ids_conf + args_test_ids)))
                 else:
                     test_ids = args_test_ids
             else:
@@ -173,17 +168,18 @@ def backup_handler(obj, loadero_test_ids, args_suite, args_test_ids, args_overwr
                 suites = local_manager.read_project_from_file(
                 local_project_id, local_project_name)["manager_config"]["suites"]
 
+                test_ids_conf = validate_suites(obj, suites, args_suite)
+
                 new_suites = create_suites(obj, suites, args_suite, args_test_ids, args_overwrite_suite)
 
                 local_manager.write_project_to_file(local_project_name, new_suites)
 
-                test_ids_conf = local_manager.read_project_from_file(
-                    local_project_id, local_project_name)["manager_config"]["suites"][args_suite]["test_ids"]
                 if len(test_ids_conf) != 0:
-                    test_ids = local_manager.validate_cli_test_ids(loadero_test_ids, test_ids_conf)
+                    test_ids = local_manager.validate_cli_test_ids(
+                    loadero_test_ids, list(set(test_ids_conf + args_test_ids)))
                 else:
-                    logger.error(f"Test suite {args_suite} is empty!")
                     test_ids = args_test_ids
+
         else:
             if args_overwrite_suite:
                 # args_test_ids, args_overwrite_suite -> True, args_suite -> False
@@ -214,7 +210,8 @@ def backup_handler(obj, loadero_test_ids, args_suite, args_test_ids, args_overwr
                 suites = local_manager.read_project_from_file(
                 local_project_id, local_project_name)["manager_config"]["suites"]
 
-                suite_test_ids = suites[args_suite]["test_ids"]
+                suite_test_ids = validate_suites(obj, suites, args_suite)
+
                 test_ids = local_manager.validate_cli_test_ids(loadero_test_ids, suite_test_ids)
 
                 suites = local_manager.read_project_from_file(local_project_id, local_project_name)[

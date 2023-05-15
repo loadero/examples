@@ -137,7 +137,6 @@ def main():
 
             if len(invalid_test_ids) > 0:
                 logger.error(f"Test id/s {invalid_test_ids} are invalid!")
-
         if len(test_ids) == 0:
             raise ValueError('No test/s for statistics!')
 

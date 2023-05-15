@@ -7,3 +7,5 @@ numpy>=1.22.4
 loadero-python>=1.0.0
 junit_xml>=1.9
 httpretty>=1.1.4.
+pandas>=2.0.1
+matplotlib>=3.7.1

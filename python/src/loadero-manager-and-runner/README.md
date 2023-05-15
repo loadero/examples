@@ -31,11 +31,6 @@ Python generator, manager and runner for automated Loadero tests
   deactivate
   ```
 
-- Or use the shellscript to setup and run the tests. Example:
-
-  ```bash
-  ./script.sh <auth_token> <project_id> <test_ids> <timeout>
-  ```
 
 ## Generate Loadero tests
 
