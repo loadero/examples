@@ -15,7 +15,7 @@ pip install -r requirements.txt
 The script has the following arguments
 
 - `--project_id` ID of the project that the access token is created for
-- `--access_token` project access token, contact support to create one
+- `--access_token` project access token
 - `--output_dir` where to store output
 - `--run_id` ID of run to download
 - `--test_id` ID of test to download
