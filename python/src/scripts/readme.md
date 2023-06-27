@@ -20,7 +20,7 @@ The script has the following arguments
 - `--run_id` ID of run to download
 - `--test_id` ID of test to download
 
-When running the script specifying `project_id`, `access_token`, `output_dir`,
-`run_id`, `test_id` is required.
+When running the script specifying `project_id`, `access_token`, `output_dir` is
+required.
 
 Must specify `run_id` or `test_id` or both.
