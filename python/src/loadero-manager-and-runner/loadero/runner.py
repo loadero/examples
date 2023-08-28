@@ -7,6 +7,7 @@ from multiprocessing import Pipe, Process
 from junit_xml import TestCase, TestSuite, to_xml_report_file
 from loadero_python.api_client import APIClient
 from loadero_python.resources.run import Run, RunAPI, RunParams
+from loadero_python.resources.test import Test
 
 from loadero.logger import Logger
 
@@ -17,14 +18,12 @@ class Runner:
     __project_id = None
     __level = None
     __logger = None
-    __api_base = None
 
     def __init__(
         self,
         access_token: str or None = None,
         project_id: int or None = None,
-        level: str = "info",
-        api_base: str = "https://api.loadero.com/v2/"
+        level: str = "info"
     ) -> None:
         if access_token is None and project_id is None:
             return
@@ -39,7 +38,6 @@ class Runner:
         self.__project_id = project_id
         self.__level = level
         self.__logger = Logger(logging.getLogger("runner"), level)
-        self.__api_base = api_base
 
     def start_test(self, test_id, logger):
         """Start test.
@@ -192,11 +190,11 @@ class Runner:
                     f"run {loadero_ids.get(p.pid)[1]} with code {p.exitcode}.")
                 if p.exitcode == 0:  # Test passes
                     pass_counter += 1
-                if p.exitcode == 1:  # Test fails
+                elif p.exitcode == 1:  # Test fails
                     fail_counter += 1
                     test_case.add_failure_info(
                         f"Test: {loadero_ids.get(p.pid)[0]} Run: {loadero_ids.get(p.pid)[1]} failed.")
-                if p.exitcode not in (0, 1):  # check for SIGTERM
+                else: # check for SIGTERM p.exitcode not in (0, 1)
                     aborted_counter += 1
                     self.stop_test(loadero_ids.get(p.pid)[
                                    0], loadero_ids.get(p.pid)[1], worker_logger)
@@ -243,7 +241,3 @@ class Runner:
     @property
     def logger(self) -> Logger:
         return self.logger
-
-    @property
-    def api_base(self) -> str:
-        return self.__api_base

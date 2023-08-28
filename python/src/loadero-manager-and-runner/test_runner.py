@@ -56,14 +56,14 @@ if __name__ == "__main__":
         if not bool(suites):
             logger.error(f'There is no {args.suite} suite!')
             test_ids = args.test_ids
-        elif bool(suites):
+        else:
             if not bool(suites[args.suite]):
                 logger.error(f'{args.suite} suite is empty!')
                 test_ids = args.test_ids
-        else:
-            suite_test_ids = suites[args.suite]['test_ids']
-            temp = [ele for ele in suite_test_ids if ele not in args.test_ids]
-            test_ids = local_manager.validate_cli_test_ids(loadero_test_ids, temp + args.test_ids)
+            else:
+                suite_test_ids = suites[args.suite]['test_ids']
+                temp = [ele for ele in suite_test_ids if ele not in args.test_ids]
+                test_ids = local_manager.validate_cli_test_ids(loadero_test_ids, temp + args.test_ids)
     else:
         test_ids = loadero_test_ids
 
