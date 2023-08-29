@@ -66,17 +66,6 @@ class RemoteManager:
         test["mos_test"] = False
         return Test(params=TestParams().from_dict(test)).create().params.to_dict_full()["id"]
 
-    def read_test(self, test_id):
-        """Reads test from Loadero API.
-
-        Args:
-            test_id (int): Loadero test id
-
-        Returns:
-            Test: Loadero Test object
-        """
-        return Test(test_id).read()
-
     def update_test(self, test):
         """Updates test on Loadero.
 
@@ -121,18 +110,6 @@ class RemoteManager:
         """
         return Group(params=GroupParams().from_dict(group)).create().params.to_dict_full()["id"]
 
-    def read_group(self, test_id, group_id):
-        """Reads group from Loadero.
-
-        Args:
-            test_id (int): Test Id
-            group_id (int): Group Id
-
-        Returns:
-            Group: Loadero group object
-        """
-        return Group(group_id, test_id).read()
-
     def update_group(self, group):
         """Updates group on Loadero.
 
@@ -143,18 +120,6 @@ class RemoteManager:
             int: Updated Loadero group id
         """
         return Group(params=GroupParams().from_dict(group)).update().params.to_dict_full()["id"]
-
-    def delete_group(self, test_id, group_id):
-        """Deletes test on Loadero.
-
-        Args:
-            test_id (int): Loadero test id
-            group_id (int): Loadero group id
-
-        Returns:
-            Group: Deleted Loadero group object
-        """
-        return Group(group_id, test_id).delete()
 
     def create_participant(self, participant):
         """Creates participant on Loadero.
@@ -167,18 +132,6 @@ class RemoteManager:
         """
         return Participant(params=ParticipantParams().from_dict(participant)).create().params.to_dict_full()["id"]
 
-    def read_participant(self, test_id, participant_id):
-        """Reads participant from Loadero.
-
-        Args:
-            test_id (int): Loadero test id
-            participant_id (int): Loadero participant id
-
-        Returns:
-            Participant: Loadero participant object
-        """
-        return Participant(participant_id, test_id).read()
-
     def update_paricipant(self, participant):
         """Updates participant on Loadero.
 
@@ -189,18 +142,6 @@ class RemoteManager:
             int: Updated participant id
         """
         return Participant(params=ParticipantParams().from_dict(participant)).update().params.to_dict_full()["id"]
-
-    def delete_participant(self, test_id, participant_id):
-        """Deletes participant on Loadero.
-
-        Args:
-            test_id (int): Loadero test id
-            participant_id (int): Loadero participant id
-
-        Returns:
-            Participant: Deleted Loadero participant object
-        """
-        return Participant(participant_id, test_id).delete()
 
     def create_assert(self, assert_):
         """Creates assert on Loadero.
@@ -362,23 +303,6 @@ class RemoteManager:
         url = f"{api_client.api_base}projects/{self.__project_id}/tests/{test_id}/runs/{run_id}/results/"
         test_run_results = api_client.get(url)["results"]
         return test_run_results
-
-    def read_single_test_run_asserts(self, test_id, run_id, result_id):
-        """Read single test run asserts
-
-        Args:
-            test_id (int): Test Id
-            run_id (int): Run Id
-            result_id (int): Result Id
-
-        Returns:
-            list: List of single test run asserts (participants)
-        """
-        api_client = APIClient(access_token=self.__access_token,
-                               project_id=self.__project_id, api_base=self.__api_base)
-        url = f"{api_client.api_base}projects/{self.__project_id}/tests/{test_id}/runs/{run_id}/results/{result_id}"
-        asserts = api_client.get(url)["asserts"]
-        return asserts
 
     @property
     def access_token(self) -> str:

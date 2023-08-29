@@ -80,12 +80,14 @@ def main():
         metric_path = rm.read_metric_path()
 
         # Test
+        project_dict = {'id': project_info['id'], 'name': project_info['name']}
         test_dict = lm.create_test_from_cli(default_test, statics, project_info, default_script)
 
         lm.create_test_directory(project_info['name'], test_dict['id'], test_dict['name'])
 
-        project_dict = {'id': project_info['id'], 'name': project_info['name']}
         lm.write_test_to_file_from_cli(project_dict, test_dict)
+
+        lm.write_script_to_file_from_cli(project_dict, test_dict)
 
         groups = []
         participants = []

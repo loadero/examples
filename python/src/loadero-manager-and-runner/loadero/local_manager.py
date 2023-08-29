@@ -337,8 +337,6 @@ class LocalManager:
         except FileNotFoundError:
             if file_name in ['test', 'script', 'groups', 'participants', 'asserts', 'asserts_preconditions']:
                 self.__logger.critical(f"There is no test with test id {loadero_id}!")
-            else:
-                self.__logger.critical(f"There is no project with project id {loadero_id}! Initialize project first!")
 
     def read_project_from_file(self, project_id, project_name):
         """Reads Loadero project from local file.
@@ -681,7 +679,7 @@ class LocalManager:
             dict: Test dictionary
         """
         test_keys = ["name", "start_interval", "participant_timeout",
-                     "mode", "increment_strategy", "mos_test", "script"]
+                     "mode", "increment_strategy", "script"]
         test = {}
         test["id"] = default_test["id"]
         for key in test_keys:
@@ -704,13 +702,6 @@ class LocalManager:
                 if not input_val:
                     input_val = 1
                 test[key] = int(input_val)
-            elif key == "mos_test":
-                input_val = input(
-                    "Is this test mos test? [y/n]: [Default 'n'] ").lower()
-                if input_val == "y":
-                    test[key] = True
-                else:
-                    test[key] = False
             else:
                 script = self.get_script_from_cli(
                     project_info["language"], script)
