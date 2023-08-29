@@ -337,6 +337,8 @@ class LocalManager:
         except FileNotFoundError:
             if file_name in ['test', 'script', 'groups', 'participants', 'asserts', 'asserts_preconditions']:
                 self.__logger.critical(f"There is no test with test id {loadero_id}!")
+            else:
+                self.__logger.critical(f"There is no project with project id {loadero_id}! Initialize project first!")
 
     def read_project_from_file(self, project_id, project_name):
         """Reads Loadero project from local file.
@@ -724,6 +726,36 @@ class LocalManager:
         with open(absolute_path, "w", encoding="utf-8") as f:
             f.write(test)
             f.write("\n")
+    
+    @staticmethod
+    def write_script_to_file_from_cli(project_dict, test_dict):
+        """Write test to a file
+
+        Args:
+            project_dict (dict): Project dictionary
+            test_dict (dict): Test dictionary
+        """
+        script_content = test_dict['script']
+                
+        # If the latest char in script_contetnt is not "\n" add it
+        if script_content[-1] != "\n":
+            script_content += "\n"
+
+        # Search for string in the script_contetnt to detemine the script language
+        if script_content.find('def test_on_loadero(driver: TestUIDriver):') != -1:
+            script_name = 'script.py'
+        elif script_content.find('public void testUIWithLoadero()') != -1:
+            script_name = 'script.java'
+        else:
+            script_name = 'script.js'
+        
+        script_absolute_path = os.path.abspath(
+            f"test_cases/{str(project_dict['id'])}_{project_dict['name']}/"+
+            f"{str(test_dict['id'])}_{test_dict['name']}/{script_name}")
+        with open(script_absolute_path, "w", encoding="utf-8") as f:
+            f.write(script_content)
+            f.write("\n")
+
 
     @staticmethod
     def create_group_from_cli(test_id, group_name, n):

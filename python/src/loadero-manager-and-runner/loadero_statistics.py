@@ -94,7 +94,7 @@ def retHist(success_rate, test_id):
     return fig
 
 
-def main():
+if __name__ == "__main__":
     try:
         """Main function for statistcs"""
         args = parse_arguments()
@@ -344,6 +344,3 @@ def main():
 
     except ConnectionError:
         logger.error("Invalid parameters: Access denied")
-
-
-main()

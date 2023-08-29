@@ -58,7 +58,7 @@ def parse_arguments():
     return args
 
 
-def main():
+if __name__ == "__main__":
     """Main function for generating tests"""
     try:
         args = parse_arguments()
@@ -141,6 +141,3 @@ def main():
 
     except ConnectionError:
         logger.error("Invalid parameters: Access denied")
-
-
-main()

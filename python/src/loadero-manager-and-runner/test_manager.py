@@ -52,7 +52,7 @@ def parse_arguments():
     return args
 
 
-def main():
+if __name__ == "__main__":
     args = parse_arguments()
 
     logger = Logger(logging.getLogger("test-manager"), args.log_level.lower())
@@ -116,6 +116,3 @@ def main():
                                             args.test_ids, args.ignore_project_language_check)
             act.init(obj, args.suite, restored_test_ids, args.overwrite_suite)
             act.backup(obj, args.suite, restored_test_ids, args.overwrite_suite, args.delete_source_test)
-
-
-main()
