@@ -118,26 +118,27 @@ if __name__ == "__main__":
                         participant_dict = lm.create_participant_from_cli(
                             default_test["id"], group_id, default_name, statics)
                         participants.append(participant_dict)
-                        # Asserts
-                        input_val = input(
-                            "Do you want to create assert/s for the participant? [y/n]: [Default 'y] ").lower()
-                        if not input_val:
-                            input_val = "y"
-                        if input_val == "y":
-                            num_asserts = input(f"Number of asserts: (Default {default_num}) ")
-                            if not num_asserts:
-                                num_asserts = default_num
-                            asserts = []
-                            for _ in range(int(num_asserts)):
-                                asserts_dict = lm.create_assert_from_cli(assert_id, default_test["id"], metric_path)
-                                asserts.append(asserts_dict)
-                        if len(asserts) != 0:
-                            lm.write_asserts_to_file_from_cli(project_dict, test_dict, asserts)
                 if len(participants) != 0:
                     lm.write_participants_to_file_from_cli(project_dict, test_dict, participants)
                 groups.append(group_dict)
         if len(groups) != 0:
             lm.write_groups_to_file_from_cli(project_dict, test_dict, groups)
+        
+        # Asserts
+        input_val = input(
+            "Do you want to create assert/s for the test? [y/n]: [Default 'y] ").lower()
+        if not input_val:
+            input_val = "y"
+        if input_val == "y":
+            num_asserts = input(f"Number of asserts: (Default {default_num}) ")
+            if not num_asserts:
+                num_asserts = default_num
+            asserts = []
+            for _ in range(int(num_asserts)):
+                asserts_dict = lm.create_assert_from_cli(assert_id, default_test["id"], metric_path)
+                asserts.append(asserts_dict)
+        if len(asserts) != 0:
+            lm.write_asserts_to_file_from_cli(project_dict, test_dict, asserts)
 
     except ConnectionError:
         logger.error("Invalid parameters: Access denied")

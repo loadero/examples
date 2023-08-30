@@ -797,7 +797,7 @@ class LocalManager:
         """
         groups_absolute_path = os.path.abspath(
             f"test_cases/{str(project_dict['id'])}_{project_dict['name']}/"+
-            f"{str(test_dict['id'])}_{test_dict['name']}/gropus.json")
+            f"{str(test_dict['id'])}_{test_dict['name']}/groups.json")
         with open(groups_absolute_path, "w", encoding="utf-8") as f:
             f.write(json.dumps(groups, indent=2, sort_keys=True))
             f.write("\n")
