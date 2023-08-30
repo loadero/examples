@@ -23,7 +23,7 @@ def create_suites(obj, suites, args_suite, test_ids, args_overwrite_suite):
         if args_suite != suite:
             new_suites[args_suite] = {"test_ids": test_ids}
         # If suites dictionary is empty
-        elif not suites:
+        elif not suite:
             if args_suite and not test_ids:
                 new_suites[args_suite] = {"test_ids": []}
             elif args_suite and test_ids:
@@ -66,23 +66,18 @@ def validate_suites(obj, suites, args_suite):
     logger = obj['logger']
     local_manager = obj['local_manager']
 
-    # Suites is empty
     if not suites:
         logger.critical(f"There is no {args_suite} suite. Action denied!")
-    # Suites is not empty
+    elif not suites[args_suite]:
+        logger.critical(f"Suite {args_suite} is empty. Action denied!")
     else:
-        # Suite is empty
-        if not suites[args_suite]:
-            logger.critical(f"Suite {args_suite} is empty. Action denied!")
-        # Suite is not empty
-        else:
-            local_project_id = int(local_manager.project_id)
-            local_project_name = local_manager.get_project_name_from_test_cases(local_project_id)
-            test_ids_conf = local_manager.read_project_from_file(
+        local_project_id = int(local_manager.project_id)
+        local_project_name = local_manager.get_project_name_from_test_cases(local_project_id)
+        test_ids_conf = local_manager.read_project_from_file(
             local_project_id, local_project_name)["manager_config"]["suites"][args_suite]["test_ids"]
-            suite_test_ids = suites[args_suite]["test_ids"]
-            test_ids = local_manager.validate_cli_test_ids(test_ids_conf, suite_test_ids)
-            return test_ids
+        suite_test_ids = suites[args_suite]["test_ids"]
+        test_ids = local_manager.validate_cli_test_ids(test_ids_conf, suite_test_ids)
+        return test_ids
 
 
 def init_handler(obj, args_suite, args_test_ids, args_overwrite_suite):
@@ -103,7 +98,7 @@ def init_handler(obj, args_suite, args_test_ids, args_overwrite_suite):
     new_suites = {}
     for directory in os.listdir("test_cases"):
         # Read and update suites
-        if directory.startswith(local_manager.project_id):
+        if directory.startswith(f'{local_manager.project_id}_'):
             local_project_id = int(local_manager.project_id)
             local_project_name = local_manager.get_project_name_from_test_cases(local_project_id)
 
@@ -113,17 +108,13 @@ def init_handler(obj, args_suite, args_test_ids, args_overwrite_suite):
             new_suites = create_suites(obj, suites, args_suite, args_test_ids, args_overwrite_suite)
         # Initialize for the first time
         else:
-            # Overwrite suite False
-            if args_suite and args_test_ids:
-                new_suites[args_suite] = {"test_ids": args_test_ids}
-            elif args_suite and not args_test_ids:
-                new_suites[args_suite] = {"test_ids": []}
-            elif not args_suite and args_test_ids:
+            if not args_suite:
                 logger.critical("You must provide suite name! Action denied!")
-            # Overwrite suite True
-            elif not args_suite and args_overwrite_suite is True:
-                logger.critical("You must provide suite name to be overwritten! Action denied!")
-    return new_suites
+            if args_test_ids:
+                new_suites[args_suite] = {"test_ids": args_test_ids}
+            else:
+                new_suites[args_suite] = {"test_ids": []}
+                return new_suites
 
 
 def backup_handler(obj, loadero_test_ids, args_suite, args_test_ids, args_overwrite_suite):
@@ -318,13 +309,17 @@ def backup(obj, args_suite, args_test_ids, args_overwrite_suite, args_delete_sou
     logger = obj["logger"]
     remote_manager = obj["remote_manager"]
     local_manager = obj["local_manager"]
+
     # Loadero test ids
-    loadero_test_ids = remote_manager.read_all_test_ids()
+    loadero_test_ids = []
+
+    all_tests_list = remote_manager.read_all_tests()
+    for test in all_tests_list:
+        loadero_test_ids.append(test['id'])
 
     # Test ids for backup
     test_ids = backup_handler(obj, loadero_test_ids, args_suite, args_test_ids, args_overwrite_suite)
 
-    all_tests_list = remote_manager.read_all_tests()
     for test in all_tests_list:
         if test["id"] in test_ids:
             logger.info(f"Backing up test id [{test['id']}]...")
