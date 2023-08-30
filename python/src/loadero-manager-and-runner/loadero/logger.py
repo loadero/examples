@@ -43,6 +43,23 @@ class Logger:
         self.__logger = logger
         self.__level = level
 
+        self.setup_handlers()
+
+    def setup_handlers(self):
+        """Set up log handlers based on the specified level and logger.
+        """
+        if self.__logger is None:
+            return
+
+        sh = logging.StreamHandler(sys.stdout if self.__level != "error" else sys.stderr)
+        sh.setLevel(logging.ERROR if self.__level == "error" else logging.DEBUG)
+        sh.setFormatter(CustomFormatter())
+
+        if self.__logger.hasHandlers():
+            self.__logger.handlers.clear()
+
+        self.__logger.addHandler(sh)
+
     def info(self, message):
         """Log info function. Logging informational messages.
 
@@ -51,14 +68,6 @@ class Logger:
         """
         if self.__level is not None:
             self.__logger.setLevel(logging.INFO)
-            sh = logging.StreamHandler(sys.stdout)
-            sh.setLevel(logging.INFO)
-            sh.setFormatter(CustomFormatter())
-
-            if self.__logger.hasHandlers():
-                self.__logger.handlers.clear()
-
-            self.__logger.addHandler(sh)
             self.__logger.info(message)
 
     def debug(self, message):
@@ -69,14 +78,6 @@ class Logger:
         """
         if self.__level == "debug":
             self.__logger.setLevel(logging.DEBUG)
-            sh = logging.StreamHandler(sys.stdout)
-            sh.setLevel(logging.DEBUG)
-            sh.setFormatter(CustomFormatter())
-
-            if self.__logger.hasHandlers():
-                self.__logger.handlers.clear()
-
-            self.__logger.addHandler(sh)
             self.__logger.debug(message)
 
     def error(self, message):
@@ -85,15 +86,6 @@ class Logger:
         Args:
             message (string): Message to be displayed
         """
-        self.__logger.setLevel(logging.ERROR)
-        sh = logging.StreamHandler(sys.stderr)
-        sh.setLevel(logging.ERROR)
-        sh.setFormatter(CustomFormatter())
-
-        if self.__logger.hasHandlers():
-            self.__logger.handlers.clear()
-
-        self.__logger.addHandler(sh)
         self.__logger.error(message)
 
     def critical(self, message):
@@ -102,15 +94,6 @@ class Logger:
         Args:
             message (string): Message to be displayed
         """
-        self.__logger.setLevel(logging.CRITICAL)
-        sh = logging.StreamHandler(sys.stderr)
-        sh.setLevel(logging.CRITICAL)
-        sh.setFormatter(CustomFormatter())
-
-        if self.__logger.hasHandlers():
-            self.__logger.handlers.clear()
-
-        self.__logger.addHandler(sh)
         self.__logger.critical(message)
 
         sys.exit(1)
