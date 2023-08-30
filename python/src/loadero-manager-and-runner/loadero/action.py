@@ -239,7 +239,7 @@ def restore_handler(obj, args_local_project_id, args_suite, args_test_ids):
     local_project_name = local_manager.get_project_name_from_test_cases(local_project_id)
 
     # Local test ids
-    test_ids_list = local_manager.get_test_ids_from_test_cases(local_project_id, local_project_name)
+    test_ids_list = [i["id"] for i in local_manager.get_tests_from_test_cases(local_project_id, local_project_name)]
 
     # Only test ids provided
     if args_test_ids and not args_suite:
@@ -327,7 +327,7 @@ def backup(obj, args_suite, args_test_ids, args_overwrite_suite, args_delete_sou
             local_manager.create_test_directory(project_name, test["id"], test["name"])
             script_file_id = local_manager.write_test_to_file(
                 project_name, test["id"], test["name"])["script_file_id"]
-            local_manager.write_script_to_file(project_name, script_file_id, test["id"], test["name"])
+            local_manager.write_script_to_file(project_name, script_file_id, test["id"], test["name"], logger)
             local_manager.write_groups_to_file(project_name, test["id"], test["name"])
             local_manager.write_participants_to_file(project_name, test["id"], test["name"])
             asserts = local_manager.write_asserts_to_file(project_name, test["id"], test["name"])
@@ -423,7 +423,7 @@ def restore_update(obj, local_project_id, local_project_name, test_id, test_name
                 for participant in participants:
                     local_group_id_by_participant = participant["group_id"]
                     if local_group_id == local_group_id_by_participant:
-                        remote_manager.update_paricipant(participant)
+                        remote_manager.update_participant(participant)
     if asserts:
         for a in asserts:
             remote_manager.update_assert(a)

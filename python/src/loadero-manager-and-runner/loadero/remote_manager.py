@@ -132,7 +132,7 @@ class RemoteManager:
         """
         return Participant(params=ParticipantParams().from_dict(participant)).create().params.to_dict_full()["id"]
 
-    def update_paricipant(self, participant):
+    def update_participant(self, participant):
         """Updates participant on Loadero.
 
         Args:

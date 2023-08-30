@@ -150,8 +150,6 @@ class LocalManager:
             manager_config['last_backup'] = time.strftime('%Y-%m-%d %H:%M:%S')
             manager_config['suites'] = suites
             local_project['manager_config'] = manager_config
-
-            self.write_to_file(absolute_path, local_project, self.__project_id)
         else:
             read_local_project = self.read_from_file(absolute_path, self.__project_id)
 
@@ -165,7 +163,7 @@ class LocalManager:
             manager_config['suites'] = suites
             local_project['manager_config'] = manager_config
 
-            self.write_to_file(absolute_path, local_project, self.__project_id)
+        self.write_to_file(absolute_path, local_project, self.__project_id)
         return project
 
     def init_project(self, suites):
@@ -199,13 +197,26 @@ class LocalManager:
         if script_content[-1] != "\n":
             script_content += "\n"
 
-        # Search for string in the script_contetnt to detemine the script language
+        # Search for string in the script_content to determine the script language
         if script_content.find('def test_on_loadero(driver: TestUIDriver):') != -1:
             script_name = 'script.py'
         elif script_content.find('public void testUIWithLoadero()') != -1:
             script_name = 'script.java'
-        else:
+        elif script_content.find('client => {') != -1:
             script_name = 'script.js'
+        else:
+            # Check project language
+            remote_manager = RemoteManager(self.__access_token, self.__project_id, self.__level)
+            project_lang = remote_manager.read_project()["language"]
+            if project_lang == 'python':
+                script_name = 'script.py'
+            elif project_lang == 'java':
+                script_name = 'script.java'
+            elif project_lang == 'javascript':
+                script_name = 'script.js'
+            else:
+                self.__logger.critical("Invalid project language!")
+                
 
         absolute_path = os.path.abspath(f"{self.__test_cases_path}/{str(self.__project_id)}_{project_name}/"
                                         f"{str(test_id)}_{test_name}/{script_name}")
@@ -487,29 +498,6 @@ class LocalManager:
         else:
             self.__logger.critical(
                 f"Directory {self.__test_cases_path} does not exist! Back up or generate test(s) first!")
-
-    def get_test_ids_from_test_cases(self, project_id, project_name):
-        """Gets test ids from test_cases directory.
-
-        Args:
-            project_id (int): Local project id
-            project_name (string): Local project name
-
-        Returns:
-            list: List of local test ids
-        """
-        path = f"{self.__test_cases_path}/{str(project_id)}_{project_name}"
-
-        test_ids = []
-        if os.path.exists(path):
-            for file in os.listdir(path):
-                d = os.path.join(path, file)
-                if os.path.isdir(d):
-                    test_id = file.split("_")[0]
-                    test_ids.append(int(test_id))
-        else:
-            self.__logger.critical(f"Wrong directory name for project id {self.__project_id}!")
-        return test_ids
 
     def get_tests_from_test_cases(self, project_id, project_name):
         """Gets tests from test_cases directory.
