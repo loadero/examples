@@ -221,11 +221,8 @@ class RemoteManager:
         APIClient(access_token=self.__access_token, project_id=self.__project_id, api_base=self.__api_base)
         tests = self.read_all_tests()
         test_ids_list = []
-        if tests:
-            for test in tests:
-                for key, value in test.items():
-                    if key == "id":
-                        test_ids_list.append(value)
+        for test in tests:
+            test_ids_list.append(test["id"])
         return test_ids_list
 
     # Test generator
