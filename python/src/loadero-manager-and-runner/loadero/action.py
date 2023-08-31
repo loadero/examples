@@ -162,48 +162,27 @@ def restore_handler(obj, args_local_project_id, args_suite, args_test_ids):
     local_manager = obj["local_manager"]
     local_project_id = int(args_local_project_id)
     local_project_name = local_manager.get_project_name_from_test_cases(local_project_id)
+    suites = local_manager.read_project_from_file(local_project_id, local_project_name)["manager_config"]["suites"]
 
-    # Local test ids
-    test_ids_list = [i["id"] for i in local_manager.get_tests_from_test_cases(local_project_id, local_project_name)]
+    # Get all local test ids
+    local_test_ids = [test["id"] for test in local_manager.get_tests_from_test_cases(local_project_id, local_project_name)]
 
-    # Only test ids provided
-    if args_test_ids and not args_suite:
-        test_ids = local_manager.validate_cli_test_ids(test_ids_list, args_test_ids)
-    # Only suite provided
-    elif args_suite and not args_test_ids:
-        suites = local_manager.read_project_from_file(local_project_id, local_project_name)["manager_config"]["suites"]
-        # Suites is empty
-        if not suites:
-            logger.critical(f"There is no {args_suite} suite!")
-        # Suites is not empty
-        else:
-            # Suite is empty
-            if not suites[args_suite]:
-                logger.critical(f"Suite {args_suite} is empty. Action denied!")
-            # Suite is not empty
-            else:
-                suite_test_ids = suites[args_suite]["test_ids"]
-                test_ids = local_manager.validate_cli_test_ids(test_ids_list, suite_test_ids)
-    # Test ids and suite provided
-    elif args_test_ids and args_suite:
-        suites = local_manager.read_project_from_file(local_project_id, local_project_name)["manager_config"]["suites"]
-        # Suites is empty
-        if not suites:
-            logger.error(f"There is no {args_suite} suite!")
-            test_ids = args_test_ids
-        # Suites is not empty
-        else:
-            # Suite is empty
-            if not suites[args_suite]:
-                logger.error(f"{args_suite} suite is empty. Action denied!")
-                test_ids = args_test_ids
-            # Suite is not empty
-            else:
-                suite_test_ids = suites[args_suite]["test_ids"]
-                temp = [ele for ele in suite_test_ids if ele not in args_test_ids]
-                test_ids = local_manager.validate_cli_test_ids(test_ids_list, temp + args_test_ids)
+    if args_test_ids and args_suite:
+        suite_test_ids = suites.get(args_suite, {}).get("test_ids", [])
+        test_ids = local_manager.validate_cli_test_ids(local_test_ids, suite_test_ids + args_test_ids)
+    elif args_suite:
+        suite_test_ids = suites.get(args_suite, {}).get("test_ids", [])
+        test_ids = local_manager.validate_cli_test_ids(local_test_ids, suite_test_ids)
+    elif args_test_ids:
+        test_ids = local_manager.validate_cli_test_ids(local_test_ids, args_test_ids)
     else:
-        test_ids = test_ids_list
+        test_ids = local_test_ids
+
+    if not test_ids and args_test_ids:
+        logger.error(f"The provided test_ids are not valid: {args_test_ids}")
+    elif not test_ids and args_suite:
+        logger.error(f"The provided suite '{args_suite}' does not exist or has no test_ids.")
+
     return test_ids
 
 
@@ -417,28 +396,18 @@ def restore(obj, args_local_project_id, args_suite, args_test_ids, args_ignore_p
     new_test_ids = []
     for test in valid_local_tests:
         # Check if test id exists in Loadero and has a backup
-        if test["id"] in loadero_test_ids and test["id"] in local_test_ids:
+        if test["id"] in loadero_test_ids:
             logger.info(f"Updating (Restoring) test id [{test['id']}]...")
-
             restore_update(obj, args_local_project_id, local_project_name, test["id"], test["name"])
-
             logger.info(f"Successfully updated (restored) test id [{test['id']}]")
         # Check if test id does not exist in Loadero and has a backup
-        elif test["id"] not in loadero_test_ids and test["id"] in local_test_ids:
+        else:
             logger.info(f"Restoring (Creating) test id [{test['id']}]...")
-
-            new_test_id = restore_create(obj, args_local_project_id,
-                                            local_project_name, test["id"], test["name"])
+            new_test_id = restore_create(obj, args_local_project_id, local_project_name, test["id"], test["name"])
             test_ids = {}
             test_ids["name"] = [test["id"], new_test_id]
-
-            logger.info(
-                f"Successfully restored (created) test id [{test_ids['name'][0]}] to "
-                f"new test id [{test_ids['name'][1]}]!")
-                
+            logger.info(f"Successfully restored (created) test id [{test_ids['name'][0]}] to new test id [{test_ids['name'][1]}]!")
             new_test_ids.append(test_ids["name"][1])
-        else:
-            logger.critical(f"There is no test id {test['id']} in directory {args_local_project_id}!")
 
     logger.info(f"Tests count: {len(valid_local_tests)}.")
 
