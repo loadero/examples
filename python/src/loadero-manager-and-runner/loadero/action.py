@@ -246,18 +246,19 @@ def backup(obj, args_suite, args_test_ids, args_overwrite_suite, args_delete_sou
     test_ids = backup_handler(obj, loadero_test_ids, args_suite, args_test_ids, args_overwrite_suite)
 
     for test in all_tests_list:
-        if test["id"] in test_ids:
-            logger.info(f"Backing up test id [{test['id']}]...")
-            project_name = remote_manager.read_project()["name"]
-            local_manager.create_test_directory(project_name, test["id"], test["name"])
-            script_file_id = local_manager.write_test_to_file(
-                project_name, test["id"], test["name"])["script_file_id"]
-            local_manager.write_script_to_file(project_name, script_file_id, test["id"], test["name"])
-            local_manager.write_groups_to_file(project_name, test["id"], test["name"])
-            local_manager.write_participants_to_file(project_name, test["id"], test["name"])
-            asserts = local_manager.write_asserts_to_file(project_name, test["id"], test["name"])
-            local_manager.write_asserts_preconditons_to_file(project_name, test["id"], test["name"], asserts)
-            logger.info(f"Successfully backed up test id [{test['id']}]!")
+        if test["id"] not in test_ids:
+            continue
+        logger.info(f"Backing up test id [{test['id']}]...")
+        project_name = remote_manager.read_project()["name"]
+        local_manager.create_test_directory(project_name, test["id"], test["name"])
+        script_file_id = local_manager.write_test_to_file(
+            project_name, test["id"], test["name"])["script_file_id"]
+        local_manager.write_script_to_file(project_name, script_file_id, test["id"], test["name"])
+        local_manager.write_groups_to_file(project_name, test["id"], test["name"])
+        local_manager.write_participants_to_file(project_name, test["id"], test["name"])
+        asserts = local_manager.write_asserts_to_file(project_name, test["id"], test["name"])
+        local_manager.write_asserts_preconditons_to_file(project_name, test["id"], test["name"], asserts)
+        logger.info(f"Successfully backed up test id [{test['id']}]!")
     if args_delete_source_test is True:
         remote_manager.delete_tests(test_ids)
 
@@ -379,25 +380,33 @@ def restore(obj, args_local_project_id, args_suite, args_test_ids, args_ignore_p
     remote_manager = obj["remote_manager"]
     local_project_name = local_manager.get_project_name_from_test_cases(int(args_local_project_id))
 
+    # Check project language
+    if args_ignore_project_language_check is False:
+        local_project_lang = local_manager.read_project_from_file(
+            int(args_local_project_id), local_project_name)["language"]
+        dst_project_lang = remote_manager.read_project()["language"]
+        # If languages are not the same break
+        if local_project_lang != dst_project_lang:
+            logger.critical("Projects' languages are not the same! Action denied!")
+
     # Get all local tests
-    all_local_tests = local_manager.get_tests_from_test_cases(args_local_project_id, local_project_name)
+    local_tests = local_manager.get_tests_from_test_cases(args_local_project_id, local_project_name)
 
     # Get all local test ids
-    local_test_ids = [int(i) for i in local_manager.get_test_ids_from_test_cases(
-        args_local_project_id, local_project_name)]
+    local_test_ids = []
+    for test in local_tests:
+        local_test_ids.append(test["id"])
     local_test_ids.sort()
     logger.info(f"--- Local testID list {local_test_ids}")
-    if local_test_ids == []:
-        local_test_ids = []
 
     # Test ids for restore action
     test_ids_to_be_restored = restore_handler(obj, args_local_project_id, args_suite, args_test_ids)
 
     # Local tests valid for restore
-    local_tests = []
-    for local_test in all_local_tests:
+    valid_local_tests = []
+    for local_test in local_tests:
         if local_test["id"] in test_ids_to_be_restored:
-            local_tests.append({"id": local_test["id"], "name": local_test["name"]})
+            valid_local_tests.append(local_test)
 
     # Loadero test ids
     loadero_test_ids = remote_manager.read_all_test_ids()
@@ -406,58 +415,31 @@ def restore(obj, args_local_project_id, args_suite, args_test_ids, args_ignore_p
         loadero_test_ids = []
 
     new_test_ids = []
-    # Looping test_ids_list from CLI if exists
-    for test in local_tests:
+    for test in valid_local_tests:
         # Check if test id exists in Loadero and has a backup
         if test["id"] in loadero_test_ids and test["id"] in local_test_ids:
-            # Check project language
-            if args_ignore_project_language_check is False:
-                local_project_lang = local_manager.read_project_from_file(
-                    int(args_local_project_id), local_project_name)["language"]
-                dst_project_lang = remote_manager.read_project()["language"]
-                # If languages are not the same break
-                if local_project_lang != dst_project_lang:
-                    logger.critical("Projects' languages are not the same! Action denied!")
-                else:
-                    logger.info(f"Updating (Restoring) test id [{test['id']}]...")
-                    restore_update(obj, args_local_project_id, local_project_name, test["id"], test["name"])
-                    logger.info(f"Successfully updated (restored) test id [{test['id']}]")
-            else:
-                logger.info(f"Updating (Restoring) test id [{test['id']}]...")
-                restore_update(obj, args_local_project_id, local_project_name, test["id"], test["name"])
-                logger.info(f"Successfully updated (restored) test id [{test['id']}]")
+            logger.info(f"Updating (Restoring) test id [{test['id']}]...")
+
+            restore_update(obj, args_local_project_id, local_project_name, test["id"], test["name"])
+
+            logger.info(f"Successfully updated (restored) test id [{test['id']}]")
         # Check if test id does not exist in Loadero and has a backup
         elif test["id"] not in loadero_test_ids and test["id"] in local_test_ids:
-            # Check project language
-            if args_ignore_project_language_check is False:
-                local_project_lang = local_manager.read_project_from_file(
-                    int(args_local_project_id), local_project_name)["language"]
-                dst_project_lang = remote_manager.read_project()["language"]
-                # If languages are not the same break
-                if local_project_lang != dst_project_lang:
-                    logger.critical("Projects' languages are not the same! Action denied!")
-                else:
-                    logger.info(f"Restoring (Creating) test id [{test['id']}]...")
-                    new_test_id = restore_create(obj, args_local_project_id,
-                                                 local_project_name, test["id"], test["name"])
-                    test_ids = {}
-                    test_ids["name"] = [test["id"], new_test_id]
-                    logger.info(
-                        f"Successfully restored (created) test id [{test_ids['name'][0]}] to "
-                        f"new test id [{test_ids['name'][1]}]!")
-                    new_test_ids.append(test_ids["name"][1])
-            else:
-                logger.info(f"Restoring (Creating) test id [{test['id']}]...")
-                new_test_id = restore_create(obj, args_local_project_id, local_project_name, test["id"], test["name"])
-                test_ids = {}
-                test_ids["name"] = [test["id"], new_test_id]
-                logger.info(
-                    f"Successfully restored (created) test id [{test_ids['name'][0]}] to "
-                    f"new test id [{test_ids['name'][1]}]!")
-                new_test_ids.append(test_ids["name"][1])
+            logger.info(f"Restoring (Creating) test id [{test['id']}]...")
+
+            new_test_id = restore_create(obj, args_local_project_id,
+                                            local_project_name, test["id"], test["name"])
+            test_ids = {}
+            test_ids["name"] = [test["id"], new_test_id]
+
+            logger.info(
+                f"Successfully restored (created) test id [{test_ids['name'][0]}] to "
+                f"new test id [{test_ids['name'][1]}]!")
+                
+            new_test_ids.append(test_ids["name"][1])
         else:
             logger.critical(f"There is no test id {test['id']} in directory {args_local_project_id}!")
 
-    logger.info(f"Tests count: {len(local_tests)}.")
+    logger.info(f"Tests count: {len(valid_local_tests)}.")
 
     return new_test_ids
