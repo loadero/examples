@@ -43,16 +43,19 @@ class Logger:
         self.__logger = logger
         self.__level = level
 
-        self.setup_handlers()
+        log_level = None
+        log_stream = None
 
-    def setup_handlers(self):
-        """Set up log handlers based on the specified level and logger.
-        """
-        if self.__logger is None:
-            return
+        if self.__level == "debug":
+            log_level = logging.DEBUG
+            log_stream = sys.stdout
+        else:
+            log_level = logging.INFO
+            log_stream = sys.stdout
 
-        sh = logging.StreamHandler(sys.stdout if self.__level != "error" else sys.stderr)
-        sh.setLevel(logging.ERROR if self.__level == "error" else logging.DEBUG)
+        self.__logger.setLevel(log_level)
+        sh = logging.StreamHandler(log_stream)
+        sh.setLevel(log_level)
         sh.setFormatter(CustomFormatter())
 
         if self.__logger.hasHandlers():
@@ -66,9 +69,7 @@ class Logger:
         Args:
             message (string): Message to be displayed
         """
-        if self.__level is not None:
-            self.__logger.setLevel(logging.INFO)
-            self.__logger.info(message)
+        self.__logger.info(message)
 
     def debug(self, message):
         """Log debug function. Logging debug messages.
@@ -76,9 +77,7 @@ class Logger:
         Args:
             message (string): Message to be displayed
         """
-        if self.__level == "debug":
-            self.__logger.setLevel(logging.DEBUG)
-            self.__logger.debug(message)
+        self.__logger.debug(message)
 
     def error(self, message):
         """Log error function. Logging non-fatal errors.
