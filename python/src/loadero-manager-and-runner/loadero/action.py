@@ -354,7 +354,7 @@ def restore_create(obj, local_project_id, local_project_name, test_id, test_name
     """
     local_manager = obj["local_manager"]
     remote_manager = obj["remote_manager"]
-    local_manager.read_project_from_file(local_project_id, local_project_name)
+
     test_from_file = local_manager.read_test_from_file(local_project_id, local_project_name, test_id, test_name)
     script = local_manager.read_script_from_file(local_project_id, local_project_name, test_id, test_name)
     test_from_file["script"] = script
@@ -364,33 +364,33 @@ def restore_create(obj, local_project_id, local_project_name, test_id, test_name
     asserts = local_manager.read_asserts_from_file(local_project_id, local_project_name, test_id, test_name)
     all_asserts_preconditions = local_manager.read_asserts_preconditions_from_file(
         local_project_id, local_project_name, test_id, test_name)
-    if groups:
-        for group in groups:
-            local_group_id = group["id"]
-            group["test_id"] = new_test_id
-            new_group_id = remote_manager.create_group(group)
-            if participants:
-                for participant in participants:
-                    local_group_id_by_participant = participant["group_id"]
-                    if local_group_id == local_group_id_by_participant:
-                        participant["test_id"] = new_test_id
-                        participant["group_id"] = new_group_id
-                        remote_manager.create_participant(participant)
-    if asserts:
-        for a in asserts:
-            old_a_id = a["id"]
-            a["test_id"] = new_test_id
-            a_id = remote_manager.create_assert(a)
-            if all_asserts_preconditions:
-                for key in all_asserts_preconditions:
-                    if int(key) == old_a_id:
-                        ap = all_asserts_preconditions[key]
-                        if ap is None:
-                            break
-                        for precondition in ap:
-                            precondition["test_id"] = new_test_id
-                            precondition["assert_id"] = a_id
-                            remote_manager.create_assert_precondition(precondition)
+
+    for group in groups:
+        local_group_id = group["id"]
+        group["test_id"] = new_test_id
+        new_group_id = remote_manager.create_group(group)
+
+        for participant in participants:
+            local_group_id_by_participant = participant["group_id"]
+            if local_group_id == local_group_id_by_participant:
+                participant["test_id"] = new_test_id
+                participant["group_id"] = new_group_id
+                remote_manager.create_participant(participant)
+
+    for a in asserts:
+        old_a_id = a["id"]
+        a["test_id"] = new_test_id
+        a_id = remote_manager.create_assert(a)
+
+        for key in all_asserts_preconditions:
+            if int(key) == old_a_id:
+                ap = all_asserts_preconditions[key]
+                if ap is None:
+                    continue
+                for precondition in ap:
+                    precondition["test_id"] = new_test_id
+                    precondition["assert_id"] = a_id
+                    remote_manager.create_assert_precondition(precondition)
     return new_test_id
 
 
@@ -415,25 +415,25 @@ def restore_update(obj, local_project_id, local_project_name, test_id, test_name
     asserts = local_manager.read_asserts_from_file(local_project_id, local_project_name, test_id, test_name)
     all_asserts_preconditions = local_manager.read_asserts_preconditions_from_file(
         local_project_id, local_project_name, test_id, test_name)
-    if groups:
-        for group in groups:
-            local_group_id = group["id"]
-            remote_manager.update_group(group)
-            if participants:
-                for participant in participants:
-                    local_group_id_by_participant = participant["group_id"]
-                    if local_group_id == local_group_id_by_participant:
-                        remote_manager.update_participant(participant)
-    if asserts:
-        for a in asserts:
-            remote_manager.update_assert(a)
-            if all_asserts_preconditions:
-                for key in all_asserts_preconditions:
-                    ap = all_asserts_preconditions[key]
-                    if ap is None:
-                        break
-                    for precondition in ap:
-                        remote_manager.update_assert_precondition(precondition)
+
+    for group in groups:
+        local_group_id = group["id"]
+        remote_manager.update_group(group)
+
+        for participant in participants:
+            local_group_id_by_participant = participant["group_id"]
+            if local_group_id == local_group_id_by_participant:
+                remote_manager.update_participant(participant)
+
+    for a in asserts:
+        remote_manager.update_assert(a)
+
+        for key in all_asserts_preconditions:
+            ap = all_asserts_preconditions[key]
+            if ap is None:
+                continue
+            for precondition in ap:
+                remote_manager.update_assert_precondition(precondition)
 
 
 def restore(obj, args_local_project_id, args_suite, args_test_ids, args_ignore_project_language_check):
