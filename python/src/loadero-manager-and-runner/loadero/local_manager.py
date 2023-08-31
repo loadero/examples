@@ -573,9 +573,6 @@ class LocalManager:
                 self.__logger.error(
                     f"Test id(s) {invalid_test_ids} are not existing on Loadero!")
 
-        if len(test_ids) == 0:
-            sys.exit(0)
-
         return test_ids
 
     @staticmethod

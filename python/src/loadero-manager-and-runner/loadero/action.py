@@ -120,86 +120,28 @@ def backup_handler(obj, loadero_test_ids, args_suite, args_test_ids, args_overwr
 
     new_suites = {}
 
-    if args_test_ids:
-        if args_suite:
-            if args_overwrite_suite:
-                # args_test_ids, args_suite, args_overwrite_suite -> True
-                suites = local_manager.read_project_from_file(
-                local_project_id, local_project_name)["manager_config"]["suites"]
-
-                test_ids_conf = validate_suites(obj, suites, args_suite)
-
-                new_suites = create_suites(obj, suites, args_suite, args_test_ids, args_overwrite_suite)
-
-                local_manager.write_project_to_file(local_project_name, new_suites)
-
-                if len(test_ids_conf) != 0:
-                    test_ids = local_manager.validate_cli_test_ids(loadero_test_ids, list(set(test_ids_conf + args_test_ids)))
-                else:
-                    test_ids = args_test_ids
-            else:
-                # args_test_ids, args_suite -> True, args_overwrite_suite -> False
-                suites = local_manager.read_project_from_file(
-                local_project_id, local_project_name)["manager_config"]["suites"]
-
-                test_ids_conf = validate_suites(obj, suites, args_suite)
-
-                new_suites = create_suites(obj, suites, args_suite, args_test_ids, args_overwrite_suite)
-
-                local_manager.write_project_to_file(local_project_name, new_suites)
-
-                if len(test_ids_conf) != 0:
-                    test_ids = local_manager.validate_cli_test_ids(
-                    loadero_test_ids, list(set(test_ids_conf + args_test_ids)))
-                else:
-                    test_ids = args_test_ids
-
+    if args_suite:
+        suites = local_manager.read_project_from_file(local_project_id, local_project_name)["manager_config"]["suites"]
+        suite_test_ids = validate_suites(obj, suites, args_suite)
+  
+        if args_test_ids:
+            new_suites = create_suites(obj, suites, args_suite, args_test_ids, args_overwrite_suite)
+            local_manager.write_project_to_file(local_project_name, new_suites)
+            
+            test_ids = local_manager.validate_cli_test_ids(loadero_test_ids, list(set(suite_test_ids + args_test_ids)))
         else:
             if args_overwrite_suite:
-                # args_test_ids, args_overwrite_suite -> True, args_suite -> False
-                logger.critical("You must provide suite name to be overwritten!")
+                logger.critical("You must provide test ids to overwrite suite! Action denied!")
             else:
-                # args_test_ids -> True, args_overwrite_suite, args_suite -> False
-                test_ids = local_manager.validate_cli_test_ids(loadero_test_ids, args_test_ids)
-    else:
-        if args_suite:
-            if args_overwrite_suite:
-                # args_test_ids -> False, args_overwrite_suite, args_suite -> True
-                suites = local_manager.read_project_from_file(
-                local_project_id, local_project_name)["manager_config"]["suites"]
-
-                test_ids_conf = validate_suites(obj, suites, args_suite)
-
-                new_suites = create_suites(obj, suites, args_suite, args_test_ids, args_overwrite_suite)
-
-                local_manager.write_project_to_file(local_project_name, new_suites)
-
-                if len(test_ids_conf) != 0:
-                    test_ids = local_manager.validate_cli_test_ids(
-                    loadero_test_ids, list(set(test_ids_conf + args_test_ids)))
-                else:
-                    logger.critical("Test ids list is empty! Action denied!")
-            else:
-                # args_test_ids, args_overwrite_suite -> False, args_suite -> True
-                suites = local_manager.read_project_from_file(
-                local_project_id, local_project_name)["manager_config"]["suites"]
-
-                suite_test_ids = validate_suites(obj, suites, args_suite)
-
                 test_ids = local_manager.validate_cli_test_ids(loadero_test_ids, suite_test_ids)
-
-                suites = local_manager.read_project_from_file(local_project_id, local_project_name)[
-                    "manager_config"]["suites"]
-                new_suites = create_suites(obj, suites, args_suite, test_ids, args_overwrite_suite)
-
-                local_manager.write_project_to_file(local_project_name, new_suites)
-        else:
+    else:
+        if args_test_ids:
             if args_overwrite_suite:
-                # args_test_ids, args_suite -> False, args_overwrite_suite True
                 logger.critical("You must provide suite name to be overwritten! Action denied!")
             else:
-                # args_test_ids, args_suite, args_overwrite_suite -> False
-                test_ids = loadero_test_ids
+                test_ids = local_manager.validate_cli_test_ids(loadero_test_ids, args_test_ids)
+        else:
+            test_ids = loadero_test_ids
     return test_ids
 
 
@@ -310,7 +252,7 @@ def backup(obj, args_suite, args_test_ids, args_overwrite_suite, args_delete_sou
             local_manager.create_test_directory(project_name, test["id"], test["name"])
             script_file_id = local_manager.write_test_to_file(
                 project_name, test["id"], test["name"])["script_file_id"]
-            local_manager.write_script_to_file(project_name, script_file_id, test["id"], test["name"], logger)
+            local_manager.write_script_to_file(project_name, script_file_id, test["id"], test["name"])
             local_manager.write_groups_to_file(project_name, test["id"], test["name"])
             local_manager.write_participants_to_file(project_name, test["id"], test["name"])
             asserts = local_manager.write_asserts_to_file(project_name, test["id"], test["name"])
