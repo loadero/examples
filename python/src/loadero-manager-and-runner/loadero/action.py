@@ -2,55 +2,38 @@ import os
 
 
 def create_suites(obj, suites, args_suite, test_ids, args_overwrite_suite):
-    """Create suites dictionary
+    """Create or modify suites in the suites dictionary
 
     Args:
         obj (dict): Contains Logger and Managers objects
         suites (dict): Suites dictionary from project_id_project_name.json file
         args_suite (string): Suite name (CLI argument)
         test_ids (list): List of test ids
-        args_overwrite_suite (boolean): Overwrite excisting suite (CLI argument)
+        args_overwrite_suite (boolean): Overwrite existing suite (CLI argument)
 
     Returns:
-        dict: Suites dictionary
+        dict: Updated suites dictionary
     """
     logger = obj['logger']
+    new_suites = suites.copy()
 
-    new_suites = {}
-    for suite in suites:
-        new_suites[suite] = suites[suite]
-        # If there is no suite with that name create one
-        if args_suite != suite:
-            new_suites[args_suite] = {"test_ids": test_ids}
-        # If suites dictionary is empty
-        elif not suite:
-            if args_suite and not test_ids:
-                new_suites[args_suite] = {"test_ids": []}
-            elif args_suite and test_ids:
-                new_suites[args_suite] = {"test_ids": test_ids}
-            elif not args_suite and test_ids:
-                logger.critical("You must provide suite name! Action denied!")
-            elif not args_suite and args_overwrite_suite is True:
-                logger.critical("You must provide suite name to be overwritten! Action denied!")
-        # If suites dictionary is not empty
-        else:
-            # Suite, empty or no test ids, overwrite suite True
-            if args_suite and not test_ids and args_overwrite_suite:
-                new_suites[args_suite] = {"test_ids": []}
-            # Suite, test ids, overwrite suite True
-            elif args_suite and test_ids and args_overwrite_suite:
-                new_suites[args_suite] = {"test_ids": test_ids}
-            # Suite, test ids, overwrite suite False
-            elif args_suite and test_ids:
-                test_ids_conf = validate_suites(obj, suites, args_suite)
-                # New test ids list with no duplicates
-                new_test_ids = list(set(test_ids_conf + test_ids))
-                new_suites[args_suite] = {"test_ids": new_test_ids}
-            elif not args_suite and test_ids:
-                logger.critical("You must provide suite name! Action denied!")
-            elif not args_suite and args_overwrite_suite:
-                logger.critical("You must provide suite name to be overwritten! Action denied!")
+    if args_suite not in new_suites:
+        new_suites[args_suite] = {"test_ids": test_ids}
+    elif not args_suite:
+        if test_ids:
+            logger.critical("You must provide suite name! Action denied!")
+        elif args_overwrite_suite:
+            logger.critical("You must provide suite name to be overwritten! Action denied!")
+    else:
+        if test_ids and not args_overwrite_suite:
+            test_ids_conf = validate_suites(obj, suites, args_suite)
+            new_test_ids = list(set(test_ids_conf + test_ids))
+            new_suites[args_suite]["test_ids"] = new_test_ids
+        elif test_ids or args_overwrite_suite:
+            new_suites[args_suite]["test_ids"] = test_ids if args_overwrite_suite else []
+
     return new_suites
+
 
 def validate_suites(obj, suites, args_suite):
     """Validate suites dictionary
@@ -114,7 +97,7 @@ def init_handler(obj, args_suite, args_test_ids, args_overwrite_suite):
                 new_suites[args_suite] = {"test_ids": args_test_ids}
             else:
                 new_suites[args_suite] = {"test_ids": []}
-                return new_suites
+    return new_suites
 
 
 def backup_handler(obj, loadero_test_ids, args_suite, args_test_ids, args_overwrite_suite):
