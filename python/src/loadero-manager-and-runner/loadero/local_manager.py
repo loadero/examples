@@ -622,8 +622,7 @@ class LocalManager:
                                    ), ]
         return questions
 
-    @staticmethod
-    def get_script_from_cli(language, default_script):
+    def get_script_from_cli(self, language, default_script):
         """Read script from cli
 
         Args:
@@ -638,18 +637,21 @@ class LocalManager:
                 input(f"Enter test's script: [Default {default_script}.py] "))
             if not script or not os.path.exists(script):
                 script = default_script + ".py"
+                self.__logger.info(f"The specified path does not exist. Using default {script}.")
 
         elif language == "javascript":
             script = str(
                 input(f"Enter test's script: [Default {default_script}.js] "))
             if not script or not os.path.exists(script):
                 script = default_script + ".js"
+                self.__logger.info(f"The specified path does not exist. Using default {script}.")
 
         else:
             script = str(
                 input(f"Enter test's script: [Default {default_script}.java] "))
             if not script or not os.path.exists(script):
                 script = default_script + ".java"
+                self.__logger.info(f"The specified path does not exist. Using default {script}.")
 
         return Script().from_file(script).content
 

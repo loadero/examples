@@ -22,17 +22,16 @@ class RemoteManager:
     __level = None
     __logger = None
     __api_base = None
+    __api_client = None
 
     def __init__(
         self,
         access_token: str or None = None,
         project_id: int or None = None,
         level: str = "info",
-        api_base: str = "https://api.loadero.com/v2/"
+        api_base: str = "https://api.loadero.com/v2/",
+        api_client: APIClient or None = None
     ) -> None:
-        if access_token is None and project_id is None:
-            return
-
         if access_token is None:
             raise TypeError("RemoteManager must be initialized with access token.")
 
@@ -45,13 +44,15 @@ class RemoteManager:
         self.__logger = Logger(logging.getLogger("remote-manager"), level)
         self.__api_base = api_base
 
+        self.__api_client = APIClient(access_token=self.__access_token,
+                               project_id=self.__project_id, api_base=self.__api_base)
+
     def read_project(self):
         """Reads project from Loadero API.
 
         Returns:
             dict: Loadero project
         """
-        APIClient(access_token=self.__access_token, project_id=self.__project_id, api_base=self.__api_base)
         return Project().read().params.to_dict_full()
 
     def create_test(self, test):
@@ -94,7 +95,6 @@ class RemoteManager:
         Returns:
             list: List of all Loadero tests
         """
-        APIClient(access_token=self.__access_token, project_id=self.__project_id, api_base=self.__api_base)
         tests = TestAPI().read_all()
         all_tests = tests.to_dict_full()["results"]
         return all_tests
@@ -218,7 +218,6 @@ class RemoteManager:
         Returns:
             list: List of test ids
         """
-        APIClient(access_token=self.__access_token, project_id=self.__project_id, api_base=self.__api_base)
         tests = self.read_all_tests()
         test_ids_list = []
         for test in tests:
@@ -232,8 +231,7 @@ class RemoteManager:
         Returns:
             list: List of statics
         """
-        api_client = APIClient(access_token=self.__access_token,
-                               project_id=self.__project_id, api_base=self.__api_base)
+        api_client = self.__api_client
         url = f"{api_client.api_base}/statics"
         return api_client.get(url)
 
@@ -243,8 +241,7 @@ class RemoteManager:
         Returns:
             list: List of metric path
         """
-        api_client = APIClient(access_token=self.__access_token,
-                               project_id=self.__project_id, api_base=self.__api_base)
+        api_client = self.__api_client
         url = f"{api_client.api_base}/statics/metric_path"
         return api_client.get(url)
 
@@ -258,8 +255,7 @@ class RemoteManager:
         Returns:
             list: List of metrics statistics
         """
-        api_client = APIClient(access_token=self.__access_token,
-                               project_id=self.__project_id, api_base=self.__api_base)
+        api_client = self.__api_client
         url = f"{api_client.api_base}projects/{self.__project_id}/runs/{run_id}/results/statistics/"
         return api_client.get(url)
 
@@ -274,7 +270,6 @@ class RemoteManager:
         Returns:
             list: List of test runs
         """
-        APIClient(access_token=self.__access_token, project_id=self.__project_id, api_base=self.__api_base)
         test_runs = Test(test_id).runs(query_params=QueryParams()
                                        .limit(limit)
                                        .offset(offset)
@@ -295,8 +290,7 @@ class RemoteManager:
         Returns:
             list: List of all test run results
         """
-        api_client = APIClient(access_token=self.__access_token,
-                               project_id=self.__project_id, api_base=self.__api_base)
+        api_client = self.__api_client
         url = f"{api_client.api_base}projects/{self.__project_id}/tests/{test_id}/runs/{run_id}/results/"
         test_run_results = api_client.get(url)["results"]
         return test_run_results
@@ -320,3 +314,7 @@ class RemoteManager:
     @property
     def api_base(self) -> str:
         return self.__api_base
+
+    @property
+    def api_client(self) -> str:
+        return self.__api_client
