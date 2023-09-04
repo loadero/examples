@@ -1,4 +1,3 @@
 venv
 reports
-images
-test_cases
+test_cases/*
