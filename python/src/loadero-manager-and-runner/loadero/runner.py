@@ -23,10 +23,9 @@ class Runner:
         self,
         access_token: str or None = None,
         project_id: int or None = None,
-        level: str = "info"
+        level: str = "info",
+        # api_client: APIClient or None = None
     ) -> None:
-        if access_token is None and project_id is None:
-            return
 
         if access_token is None:
             raise TypeError("Runner must be initialized with access token.")
@@ -38,6 +37,8 @@ class Runner:
         self.__project_id = project_id
         self.__level = level
         self.__logger = Logger(logging.getLogger("runner"), level)
+        
+        APIClient(access_token=self.__access_token, project_id=self.__project_id)
 
     def start_test(self, test_id, logger):
         """Start test.
@@ -158,13 +159,13 @@ class Runner:
                 p.start()
                 # Receive current run_id from run_test function
                 run_id = parent_conn.recv()
-                # Store test_id and run_id for each test for further tracking
-                loadero_ids[p.pid] = [test_id, run_id]
+                # Store test_id and run_id for each test for further tracking as a dictionary
+                loadero_ids[p.pid] = {"test_id": test_id, "run_id": run_id}
                 self.__logger.info(
                     f"Created test process {p.pid} for test {test_id} and run {run_id}.")
                 proceses.append(p)
 
-            # Check if timeout occured
+            # Check if timeout occurred
             while time.time() - start_time <= int(timeout):
                 live_process_counter = 0
                 for p in proceses:
@@ -183,26 +184,25 @@ class Runner:
             for p in proceses:
                 # Report data
                 test_case = TestCase(
-                    name=f'Loadero project id: {project_id} test id: {test_id}')
+                    name=f'Loadero project id: {project_id} test id: {loadero_ids.get(p.pid)["test_id"]}')
 
                 self.__logger.info(
-                    f"Finished test process {p.pid} for test {loadero_ids.get(p.pid)[0]} and "
-                    f"run {loadero_ids.get(p.pid)[1]} with code {p.exitcode}.")
+                    f"Finished test process {p.pid} for test {loadero_ids.get(p.pid)['test_id']} and "
+                    f"run {loadero_ids.get(p.pid)['run_id']} with code {p.exitcode}.")
                 if p.exitcode == 0:  # Test passes
                     pass_counter += 1
                 elif p.exitcode == 1:  # Test fails
                     fail_counter += 1
                     test_case.add_failure_info(
-                        f"Test: {loadero_ids.get(p.pid)[0]} Run: {loadero_ids.get(p.pid)[1]} failed.")
+                        f"Test: {loadero_ids.get(p.pid)['test_id']} Run: {loadero_ids.get(p.pid)['run_id']} failed.")
                 else: # check for SIGTERM p.exitcode not in (0, 1)
                     aborted_counter += 1
-                    self.stop_test(loadero_ids.get(p.pid)[
-                                   0], loadero_ids.get(p.pid)[1], worker_logger)
+                    self.stop_test(loadero_ids.get(p.pid)['test_id'], loadero_ids.get(p.pid)['run_id'], worker_logger)
                     self.__logger.error(
-                        f"Test: {loadero_ids.get(p.pid)[0]} "
-                        f"run: {loadero_ids.get(p.pid)[1]} was terminated due to timeout!")
+                        f"Test: {loadero_ids.get(p.pid)['test_id']} "
+                        f"run: {loadero_ids.get(p.pid)['run_id']} was terminated due to timeout!")
                     test_case.add_error_info(
-                        f"Test: {loadero_ids.get(p.pid)[0]} Run: {loadero_ids.get(p.pid)[1]} "
+                        f"Test: {loadero_ids.get(p.pid)['test_id']} Run: {loadero_ids.get(p.pid)['run_id']} "
                         "was terminated due to timeout!")
 
                 test_cases.append(test_case)

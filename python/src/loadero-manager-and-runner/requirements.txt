@@ -8,3 +8,4 @@ junit_xml==1.9
 httpretty==1.1.4.
 pandas==2.0.3
 matplotlib==3.7.2
+inquirer==3.1.3
