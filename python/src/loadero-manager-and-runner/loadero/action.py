@@ -20,17 +20,16 @@ def create_suites(obj, suites, args_suite, test_ids, args_overwrite_suite):
     if args_suite not in new_suites:
         new_suites[args_suite] = {"test_ids": test_ids}
     elif not args_suite:
-        if test_ids:
-            logger.critical("You must provide suite name! Action denied!")
-        elif args_overwrite_suite:
-            logger.critical("You must provide suite name to be overwritten! Action denied!")
+        logger.critical("You must provide suite name! Action denied!")
     else:
-        if test_ids and not args_overwrite_suite:
-            test_ids_conf = validate_suites(obj, suites, args_suite)
-            new_test_ids = list(set(test_ids_conf + test_ids))
+        # Modify test IDs based on whether overwriting is requested or new test IDs are provided
+        if args_overwrite_suite:
+            new_suites[args_suite]["test_ids"] = test_ids
+        else:
+            # Append new test IDs to the existing test IDs
+            existing_test_ids = new_suites[args_suite]["test_ids"]
+            new_test_ids = list(set(existing_test_ids + test_ids))
             new_suites[args_suite]["test_ids"] = new_test_ids
-        elif test_ids or args_overwrite_suite:
-            new_suites[args_suite]["test_ids"] = test_ids if args_overwrite_suite else []
 
     return new_suites
 
@@ -62,7 +61,6 @@ def validate_suites(obj, suites, args_suite):
         test_ids = local_manager.validate_cli_test_ids(test_ids_conf, suite_test_ids)
         return test_ids
 
-
 def init_handler(obj, args_suite, args_test_ids, args_overwrite_suite):
     """Manages test_ids and suite CLI args for init action.
 
@@ -70,7 +68,7 @@ def init_handler(obj, args_suite, args_test_ids, args_overwrite_suite):
         obj (dict): Contains Logger and Managers objects
         args_suite (string): Suite name (CLI argument)
         args_test_ids (list): List of test ids (CLI argument)
-        args_overwrite_suite (boolean): Overwrite excisting suite (CLI argument)
+        args_overwrite_suite (boolean): Overwrite existing suite (CLI argument)
 
     Returns:
         dict: Suites dictionary
@@ -79,24 +77,22 @@ def init_handler(obj, args_suite, args_test_ids, args_overwrite_suite):
     local_manager = obj["local_manager"]
 
     new_suites = {}
+
+    # Get the project name you want to initialize
+    project_name_to_initialize = local_manager.find_project_name_by_project_id()
+
     for directory in os.listdir("test_cases"):
-        # Read and update suites
-        if directory.startswith(f'{local_manager.project_id}_'):
-            local_project_id = int(local_manager.project_id)
-            local_project_name = local_manager.get_project_name_from_test_cases(local_project_id)
-
-            suites = local_manager.read_project_from_file(local_project_id, local_project_name)[
-                "manager_config"]["suites"]
-
-            new_suites = create_suites(obj, suites, args_suite, args_test_ids, args_overwrite_suite)
-        # Initialize for the first time
-        else:
+        # Check if the current directory matches the project you want to initialize
+        if directory == project_name_to_initialize:
             if not args_suite:
                 logger.critical("You must provide suite name! Action denied!")
             if args_test_ids:
                 new_suites[args_suite] = {"test_ids": args_test_ids}
             else:
                 new_suites[args_suite] = {"test_ids": []}
+            # Found the project, no need to continue the loop
+            break
+
     return new_suites
 
 

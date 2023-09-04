@@ -81,6 +81,16 @@ class LocalManager:
             self.__logger.debug(
                 f"Directory for project id [{test_id}] already exists!")
 
+    def find_project_name_by_project_id(self):
+        """Finds project name by project id.
+        """
+        for directory in os.listdir("test_cases"):
+            if directory.startswith(f'{self.__project_id}_'):
+                project_name = directory[len(str(self.__project_id)) + 1:]
+                return project_name
+            else:
+                self.__logger.critical("Project does not exist!")
+
     def write_to_file(self, absolute_path, content, loadero_id):
         """Writes Loadero API data to a file.
 
