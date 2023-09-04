@@ -48,8 +48,8 @@ def parse_arguments():
                         default=False, required=False, type=parse_boolean)
     parser.add_argument("--overwrite_suite", help="Overwrite suite", required=False, type=parse_boolean, default=False)
 
-    args = parser.parse_args()
-    return args
+    cli_args = parser.parse_args()
+    return cli_args
 
 
 if __name__ == "__main__":

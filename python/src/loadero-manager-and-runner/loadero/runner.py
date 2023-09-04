@@ -7,7 +7,6 @@ from multiprocessing import Pipe, Process
 from junit_xml import TestCase, TestSuite, to_xml_report_file
 from loadero_python.api_client import APIClient
 from loadero_python.resources.run import Run, RunAPI, RunParams
-from loadero_python.resources.test import Test
 
 from loadero.logger import Logger
 
@@ -37,7 +36,7 @@ class Runner:
         self.__project_id = project_id
         self.__level = level
         self.__logger = Logger(logging.getLogger("runner"), level)
-        
+
         APIClient(access_token=self.__access_token, project_id=self.__project_id)
 
     def start_test(self, test_id, logger):

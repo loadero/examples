@@ -86,7 +86,7 @@ def init_handler(obj, args_suite, args_test_ids, args_overwrite_suite):
         if directory == project_name_to_initialize:
             if not args_suite:
                 logger.critical("You must provide suite name! Action denied!")
-            if args_test_ids:
+            if args_test_ids and args_overwrite_suite:
                 new_suites[args_suite] = {"test_ids": args_test_ids}
             else:
                 new_suites[args_suite] = {"test_ids": []}
@@ -119,11 +119,10 @@ def backup_handler(obj, loadero_test_ids, args_suite, args_test_ids, args_overwr
     if args_suite:
         suites = local_manager.read_project_from_file(local_project_id, local_project_name)["manager_config"]["suites"]
         suite_test_ids = validate_suites(obj, suites, args_suite)
-  
+
         if args_test_ids:
             new_suites = create_suites(obj, suites, args_suite, args_test_ids, args_overwrite_suite)
             local_manager.write_project_to_file(local_project_name, new_suites)
-            
             test_ids = local_manager.validate_cli_test_ids(loadero_test_ids, list(set(suite_test_ids + args_test_ids)))
         else:
             if args_overwrite_suite:
@@ -161,7 +160,8 @@ def restore_handler(obj, args_local_project_id, args_suite, args_test_ids):
     suites = local_manager.read_project_from_file(local_project_id, local_project_name)["manager_config"]["suites"]
 
     # Get all local test ids
-    local_test_ids = [test["id"] for test in local_manager.get_tests_from_test_cases(local_project_id, local_project_name)]
+    local_test_ids = [test["id"] for test in
+        local_manager.get_tests_from_test_cases(local_project_id, local_project_name)]
 
     if args_test_ids and args_suite:
         suite_test_ids = suites.get(args_suite, {}).get("test_ids", [])
@@ -402,7 +402,8 @@ def restore(obj, args_local_project_id, args_suite, args_test_ids, args_ignore_p
             new_test_id = restore_create(obj, args_local_project_id, local_project_name, test["id"], test["name"])
             test_ids = {}
             test_ids["name"] = [test["id"], new_test_id]
-            logger.info(f"Successfully restored (created) test id [{test_ids['name'][0]}] to new test id [{test_ids['name'][1]}]!")
+            logger.info(f"Successfully restored (created) test id [{test_ids['name'][0]}]\
+                to new test id [{test_ids['name'][1]}]!")
             new_test_ids.append(test_ids["name"][1])
 
     logger.info(f"Tests count: {len(valid_local_tests)}.")

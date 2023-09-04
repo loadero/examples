@@ -1,7 +1,6 @@
 import json
 import logging
 import os
-import sys
 import time
 
 import inquirer
@@ -88,8 +87,7 @@ class LocalManager:
             if directory.startswith(f'{self.__project_id}_'):
                 project_name = directory[len(str(self.__project_id)) + 1:]
                 return project_name
-            else:
-                self.__logger.critical("Project does not exist!")
+            self.__logger.critical("Project does not exist!")
 
     def write_to_file(self, absolute_path, content, loadero_id):
         """Writes Loadero API data to a file.
@@ -226,7 +224,6 @@ class LocalManager:
                 script_name = 'script.js'
             else:
                 self.__logger.critical("Invalid project language!")
-                
 
         absolute_path = os.path.abspath(f"{self.__test_cases_path}/{str(self.__project_id)}_{project_name}/"
                                         f"{str(test_id)}_{test_name}/{script_name}")
@@ -723,7 +720,7 @@ class LocalManager:
         with open(absolute_path, "w", encoding="utf-8") as f:
             f.write(test)
             f.write("\n")
-    
+
     @staticmethod
     def write_script_to_file_from_cli(project_dict, test_dict):
         """Write test to a file
@@ -733,7 +730,7 @@ class LocalManager:
             test_dict (dict): Test dictionary
         """
         script_content = test_dict['script']
-                
+
         # If the latest char in script_contetnt is not "\n" add it
         if script_content[-1] != "\n":
             script_content += "\n"
@@ -745,7 +742,7 @@ class LocalManager:
             script_name = 'script.java'
         else:
             script_name = 'script.js'
-        
+
         script_absolute_path = os.path.abspath(
             f"test_cases/{str(project_dict['id'])}_{project_dict['name']}/"+
             f"{str(test_dict['id'])}_{test_dict['name']}/{script_name}")

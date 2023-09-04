@@ -54,8 +54,8 @@ def parse_arguments():
     parser.add_argument("--log_level", help="Log Levels: info, debug", default="info",
                         choices=["info", "INFO", "debug", "DEBUG"], required=False)
 
-    args = parser.parse_args()
-    return args
+    cli_args = parser.parse_args()
+    return cli_args
 
 
 if __name__ == "__main__":
@@ -123,7 +123,7 @@ if __name__ == "__main__":
                 groups.append(group_dict)
         if len(groups) != 0:
             lm.write_groups_to_file_from_cli(project_dict, test_dict, groups)
-        
+
         # Asserts
         input_val = input(
             "Do you want to create assert/s for the test? [y/n]: [Default 'y] ").lower()

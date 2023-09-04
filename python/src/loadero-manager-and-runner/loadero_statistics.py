@@ -23,8 +23,8 @@ def parse_arguments():
     parser.add_argument("--log_level", help="Log Levels: info, debug", default="info",
                         choices=["info", "INFO", "debug", "DEBUG"], required=False)
 
-    args = parser.parse_args()
-    return args
+    cli_args = parser.parse_args()
+    return cli_args
 
 
 def reverse(lst):
@@ -135,7 +135,7 @@ if __name__ == "__main__":
 
             if len(invalid_test_ids) > 0:
                 logger.error(f"Test id/s {invalid_test_ids} are invalid!")
-        
+
         if len(test_ids) == 0:
             raise ValueError('No test/s for statistics!')
 
@@ -208,7 +208,7 @@ if __name__ == "__main__":
                             stats = {}
                             if result_path in machine_statistics:
                                 stats = machine_statistics[result_path]
-                                
+
                             elif "/".join(result_path.split("/")[:-1]) in machine_statistics:
                                 stats = machine_statistics["/".join(result_path.split("/")[:-1])]
 

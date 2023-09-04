@@ -29,8 +29,7 @@ class RemoteManager:
         access_token: str or None = None,
         project_id: int or None = None,
         level: str = "info",
-        api_base: str = "https://api.loadero.com/v2/",
-        api_client: APIClient or None = None
+        api_base: str = "https://api.loadero.com/v2/"
     ) -> None:
         if access_token is None:
             raise TypeError("RemoteManager must be initialized with access token.")

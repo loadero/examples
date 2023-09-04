@@ -18,5 +18,6 @@ disable=
     W0631, # Undefined loop variable
     R0912, # Too many branches
     R0904, # Too many public methods
+    W0105, # pointless-string-statement
 [TYPECHECK]
 ignored-modules = netifaces
