@@ -94,6 +94,9 @@ class RemoteManager:
         Returns:
             list: List of all Loadero tests
         """
+        # APIClient should be reinitialized because of clone and migrate actions
+        APIClient(access_token=self.__access_token,
+                               project_id=self.__project_id, api_base=self.__api_base)
         tests = TestAPI().read_all()
         all_tests = tests.to_dict_full()["results"]
         return all_tests

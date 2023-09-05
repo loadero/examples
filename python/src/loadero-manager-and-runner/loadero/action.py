@@ -386,6 +386,7 @@ def restore(obj, args_local_project_id, args_suite, args_test_ids, args_ignore_p
     # Loadero test ids
     loadero_test_ids = remote_manager.read_all_test_ids()
     loadero_test_ids.sort()
+
     if loadero_test_ids is None:
         loadero_test_ids = []
 
@@ -402,8 +403,7 @@ def restore(obj, args_local_project_id, args_suite, args_test_ids, args_ignore_p
             new_test_id = restore_create(obj, args_local_project_id, local_project_name, test["id"], test["name"])
             test_ids = {}
             test_ids["name"] = [test["id"], new_test_id]
-            logger.info(f"Successfully restored (created) test id [{test_ids['name'][0]}]\
-                to new test id [{test_ids['name'][1]}]!")
+            logger.info(f"Successfully restored (created) test id [{test_ids['name'][0]}] to new test id [{test_ids['name'][1]}]!")
             new_test_ids.append(test_ids["name"][1])
 
     logger.info(f"Tests count: {len(valid_local_tests)}.")

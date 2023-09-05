@@ -87,7 +87,6 @@ class LocalManager:
             if directory.startswith(f'{self.__project_id}_'):
                 project_name = directory[len(str(self.__project_id)) + 1:]
                 return project_name
-            self.__logger.critical("Project does not exist!")
 
     def write_to_file(self, absolute_path, content, loadero_id):
         """Writes Loadero API data to a file.
@@ -644,21 +643,21 @@ class LocalManager:
                 input(f"Enter test's script: [Default {default_script}.py] "))
             if not script or not os.path.exists(script):
                 script = default_script + ".py"
-                self.__logger.info(f"The specified path does not exist. Using default {script}.")
+                self.__logger.info(f"Using default {script}.")
 
         elif language == "javascript":
             script = str(
                 input(f"Enter test's script: [Default {default_script}.js] "))
             if not script or not os.path.exists(script):
                 script = default_script + ".js"
-                self.__logger.info(f"The specified path does not exist. Using default {script}.")
+                self.__logger.info(f"Using default {script}.")
 
         else:
             script = str(
                 input(f"Enter test's script: [Default {default_script}.java] "))
             if not script or not os.path.exists(script):
                 script = default_script + ".java"
-                self.__logger.info(f"The specified path does not exist. Using default {script}.")
+                self.__logger.info(f"Using default {script}.")
 
         return Script().from_file(script).content
 
