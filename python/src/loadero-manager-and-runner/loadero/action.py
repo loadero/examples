@@ -61,6 +61,7 @@ def validate_suites(obj, suites, args_suite):
         test_ids = local_manager.validate_cli_test_ids(test_ids_conf, suite_test_ids)
         return test_ids
 
+
 def init_handler(obj, args_suite, args_test_ids, args_overwrite_suite):
     """Manages test_ids and suite CLI args for init action.
 
@@ -71,27 +72,29 @@ def init_handler(obj, args_suite, args_test_ids, args_overwrite_suite):
         args_overwrite_suite (boolean): Overwrite existing suite (CLI argument)
 
     Returns:
-        dict: Suites dictionary
+        dict: Updated Suites dictionary or None if critical error occurs
     """
     logger = obj["logger"]
     local_manager = obj["local_manager"]
 
-    new_suites = {}
+    new_suites = None  # Initialize as None, will be updated if needed
 
     # Get the project name you want to initialize
     project_name_to_initialize = local_manager.find_project_name_by_project_id()
 
-    for directory in os.listdir("test_cases"):
-        # Check if the current directory matches the project you want to initialize
-        if directory == project_name_to_initialize:
-            if not args_suite:
-                logger.critical("You must provide suite name! Action denied!")
-            if args_test_ids and args_overwrite_suite:
-                new_suites[args_suite] = {"test_ids": args_test_ids}
-            else:
+    if project_name_to_initialize is None:
+        logger.critical("Project not found! Action denied!")
+    else:
+        new_suites = local_manager.get_suites_by_project_name(project_name_to_initialize)
+
+        if not args_suite:
+            logger.critical("You must provide a suite name! Action denied!")
+        else:
+            if args_suite not in new_suites:
                 new_suites[args_suite] = {"test_ids": []}
-            # Found the project, no need to continue the loop
-            break
+
+            if args_test_ids and args_overwrite_suite:
+                new_suites[args_suite]["test_ids"] = args_test_ids
 
     return new_suites
 

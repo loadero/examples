@@ -32,9 +32,6 @@ class LocalManager:
         level: str = "info",
         test_cases_path: str = "./test_cases"
     ) -> None:
-        if access_token is None and project_id is None:
-            return
-
         if access_token is None:
             raise TypeError("LocalManager must be initialized with access token.")
 

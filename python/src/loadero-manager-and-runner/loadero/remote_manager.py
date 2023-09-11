@@ -21,15 +21,13 @@ class RemoteManager:
     __project_id = None
     __level = None
     __logger = None
-    __api_base = None
     __api_client = None
 
     def __init__(
         self,
         access_token: str or None = None,
         project_id: int or None = None,
-        level: str = "info",
-        api_base: str = "https://api.loadero.com/v2/"
+        level: str = "info"
     ) -> None:
         if access_token is None:
             raise TypeError("RemoteManager must be initialized with access token.")
@@ -41,10 +39,9 @@ class RemoteManager:
         self.__project_id = project_id
         self.__level = level
         self.__logger = Logger(logging.getLogger("remote-manager"), level)
-        self.__api_base = api_base
 
         self.__api_client = APIClient(access_token=self.__access_token,
-                               project_id=self.__project_id, api_base=self.__api_base)
+                               project_id=self.__project_id)
 
     def read_project(self):
         """Reads project from Loadero API.
@@ -95,8 +92,7 @@ class RemoteManager:
             list: List of all Loadero tests
         """
         # APIClient should be reinitialized because of clone and migrate actions
-        APIClient(access_token=self.__access_token,
-                               project_id=self.__project_id, api_base=self.__api_base)
+        APIClient(access_token=self.__access_token, project_id=self.__project_id)
         tests = TestAPI().read_all()
         all_tests = tests.to_dict_full()["results"]
         return all_tests
@@ -312,10 +308,6 @@ class RemoteManager:
     @property
     def logger(self) -> Logger:
         return self.__logger
-
-    @property
-    def api_base(self) -> str:
-        return self.__api_base
 
     @property
     def api_client(self) -> str:

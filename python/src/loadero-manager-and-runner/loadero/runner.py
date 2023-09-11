@@ -22,8 +22,7 @@ class Runner:
         self,
         access_token: str or None = None,
         project_id: int or None = None,
-        level: str = "info",
-        # api_client: APIClient or None = None
+        level: str = "info"
     ) -> None:
 
         if access_token is None:
