@@ -4,7 +4,7 @@
 
 def test_on_loadero(driver: TestUIDriver) -> None:
     # The main logic of the test is in top_search_results function
-    print(top_search_results(driver, "loadero", 10))
+    print(top_search_results(driver, "QA Processes", 5))
 
 
 # top_search_results returns the top n search results for search_query.

@@ -10,7 +10,7 @@ driver = (
     .set_selenium_driver()
 )
 
-driver.navigate_to("https://loadero.com/")
+driver.navigate_to("https://duckduckgo.com/")
 time.sleep(10)
 
 driver.quit()
