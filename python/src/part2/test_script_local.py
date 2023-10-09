@@ -26,5 +26,5 @@ def driver() -> TestUIDriver:
 
 @pytest.mark.test
 def test_on_loadero(driver: TestUIDriver) -> None:    
-    driver.navigate_to("https://loadero.com/")
+    driver.navigate_to("https://duckduckgo.com/")
     time.sleep(10)

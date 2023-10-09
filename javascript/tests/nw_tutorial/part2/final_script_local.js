@@ -3,14 +3,15 @@
 module.exports = {
     test: client => {
         client
-            .url('https://loadero.com/home')
-            .waitForElementVisible('.home', 10 * 1000)
-            .waitForElementVisible('.accept', 10 * 1000)
-            .click('.accept')
-            .setValue('.trial input', 'john.doe@example.com')
-            .setValue('.trial input', client.Keys.ENTER)
-            .pause(10 * 1000)
-            .saveScreenshot('screenshot.png')
+            .url('https://github.com/')
+            .waitForElementVisible('.search-input-container', 10 * 1000)
+            .click('.search-input-container')
+            .setValue('.FormControl-input', 'Nightwatch')
+            .click('.ActionListItem')
+            .assert.textContains('a .search-match', 'nightwatch')
+            .click('.search-title a')
+            .pause(5 * 1000)
+            .saveScreenshot('nightwatch.png')
             .perform(done => {
                 console.log('The script has finished its execution');
 
