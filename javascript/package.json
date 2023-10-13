@@ -18,6 +18,6 @@
   "dependencies": {
     "chromedriver": "96.0.0",
     "geckodriver": "2.0.4",
-    "nightwatch": "1.7.13"
+    "nightwatch": "3.2.1"
   }
 }
