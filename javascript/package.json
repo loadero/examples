@@ -17,7 +17,7 @@
   "homepage": "https://github.com/loadero/examples#readme",
   "dependencies": {
     "chromedriver": "96.0.0",
-    "geckodriver": "2.0.0",
+    "geckodriver": "2.0.4",
     "nightwatch": "1.5.1"
   }
 }
