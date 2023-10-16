@@ -185,7 +185,7 @@ Python generator, manager and runner for automated Loadero tests
   --action restore
   ```
 
-- Migrate all Loadero test(s)
+- Sync all Loadero test(s)
 
   ```
   python test_manager.py
@@ -193,10 +193,10 @@ Python generator, manager and runner for automated Loadero tests
   --project_id_from {PROJECT_ID} \
   --access_token_to {ACCESS_TOKEN} \
   --project_id_to {PROJECT_ID} \
-  --action migrate
+  --action sync
   ```
 
-- Migrate certain Loadero test(s) by passing Loadero test ids
+- Sync certain Loadero test(s) by passing Loadero test ids
 
   ```
   python test_manager.py \
@@ -205,10 +205,10 @@ Python generator, manager and runner for automated Loadero tests
   --access_token_to {ACCESS_TOKEN} \
   --project_id_to {PROJECT_ID} \
   --test_ids {TEST_ID1} {TEST_ID2} {TEST_IDN} \
-  --action migrate
+  --action sync
   ```
 
-- Migrate certain Loadero test(s) by passing local suite
+- Sync certain Loadero test(s) by passing local suite
 
   ```
   python test_manager.py \
@@ -217,7 +217,7 @@ Python generator, manager and runner for automated Loadero tests
   --access_token_to {ACCESS_TOKEN} \
   --project_id_to {PROJECT_ID} \
   --suite {SUITE_NAME} \
-  --action migrate
+  --action sync
   ```
 
 - Clone certain Loadero test(s) by passing Loadero test ids and suite (If there are duplicated test ids, the test with that particular id will be cloned once.)
@@ -355,10 +355,10 @@ python test_manager.py --access_token_to {PROJECT_B_ACCESS_TOKEN} --project_id_t
 ```
 After restore the test on project B will be updated with local changes.
 
-### Migrate tests to another project
-- Migrate the test from project A to project B
+### Sync tests to another project
+- Sync the test from project A to project B
 ```
-python test_manager.py --access_token_to {PROJECT_B_ACCESS_TOKEN} --project_id_to {PROJECT_B_ID} --access_token_from {PROJECT_A_ACCESS_TOKEN}  --project_id_from {PROJECT_A_ID} --action migrate --suite {SUITE_NAME_FROM_PROJECT_A} --overwrite_suite True 
+python test_manager.py --access_token_to {PROJECT_B_ACCESS_TOKEN} --project_id_to {PROJECT_B_ID} --access_token_from {PROJECT_A_ACCESS_TOKEN}  --project_id_from {PROJECT_A_ID} --action sync --suite {SUITE_NAME_FROM_PROJECT_A} --overwrite_suite True 
 ```
 !!! Note: If the test is not specified in the suite use `--test_ids {TEST_IDS}` to add the test for migration.
 !!! Note: If the test is not required in project A and migration is one way use `--delete_source_test True` to delete the test from project A.

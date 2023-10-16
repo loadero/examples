@@ -36,8 +36,8 @@ def parse_arguments():
     parser.add_argument("--test_ids", help="Loadero test ids", required=False, nargs="*", type=int)
     parser.add_argument("--suite", help="Suite name", required=False)
     parser.add_argument(
-        "--action", help="Actions: backup, restore, clone, init, migrate",
-        choices=["backup", "BACKUP", "restore", "RESTORE", "clone", "CLONE", "init", "INIT", "migrate", "MIGRATE"],
+        "--action", help="Actions: backup, restore, clone, init, sync",
+        choices=["backup", "BACKUP", "restore", "RESTORE", "clone", "CLONE", "init", "INIT", "sync", "SYNC"],
         required=True)
     parser.add_argument("--log_level", help="Logging levels: info, debug", default="info",
                         choices=["info", "INFO", "debug", "DEBUG"], required=False)
@@ -104,8 +104,8 @@ if __name__ == "__main__":
             obj["remote_manager"] = remote_manager_to
             act.restore(obj, args.project_id_from, args.suite, args.test_ids, args.ignore_project_language_check)
 
-        case "migrate":
-            logger.info("Action MIGRATE.")
+        case "sync":
+            logger.info("Action SYNC.")
 
             local_manager_to = LocalManager(args.access_token_to, args.project_id_to, args.log_level.lower())
             remote_manager_to = RemoteManager(args.access_token_to, args.project_id_to, args.log_level.lower())
