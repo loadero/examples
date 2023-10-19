@@ -22,7 +22,7 @@ def parse_arguments():
     args = parser.parse_args()
     return args
 
-def main():
+if __name__ == "__main__":
     try:
         # Parse command line arguments
         args = parse_arguments()
@@ -102,44 +102,83 @@ def main():
 
                 for test_assert in test_asserts:
                     path = test_assert["path"]
-                    average_value = "N/A"
+                    average_value = None
                     stddev_value = 0.0
-
                     for result_assert in result_asserts:
                         result_path = result_assert["path"]
 
                         if result_path != path:
                             continue
+
+                        # If test assert is in result asserts check if there are metrics,
+                        # if not avg=None stddev=0
                         if "metrics" in result_statistics:
                             metrics_statistics = result_statistics["metrics"]
 
-                            for metric_type in ["machine", "webrtc"]:
-                                if metric_type in metrics_statistics:
-                                    metric_statistics = metrics_statistics[metric_type]
+                            # If test assert is in result asserts and there are metrics check
+                            # if there are machine metrics, if not avg=None stddev=0
+                            if "machine" in metrics_statistics:
+                                machine_statistics = metrics_statistics["machine"]
+                                for ms in machine_statistics:
+                                    # if ms path is substing of result_path, result_path and path are same
+                                    if ms in result_path:
+                                        # For num assert
+                                        if "average" in machine_statistics[ms] or \
+                                        "stddev" in machine_statistics[ms]:
+                                            average_value = machine_statistics[ms]["average"]
+                                            stddev_value = machine_statistics[ms]["stddev"]
+                                        # For string assert
+                                        if "value" in machine_statistics[ms]:
+                                            average_value = machine_statistics[ms]["value"]
+                                            stddev_value = 0.0
+                            # If test assert is in result asserts and there are metrics
+                            # check if there are webrtc metrics, if not avg=None stddev=0
+                            if "webrtc" in metrics_statistics:
+                                webrtc_statistics = metrics_statistics["webrtc"]
 
-                                    for metric_path, metric_data in metric_statistics.items():
-                                        if metric_path in result_path:
-                                            if "average" in metric_data or "stddev" in metric_data:
-                                                average_value = metric_data.get("average", "N/A")
-                                                stddev_value = metric_data.get("stddev", 0.0)
-                                            elif "value" in metric_data:
-                                                average_value = metric_data["value"]
+                                for ws in webrtc_statistics:
+                                    # if ws path is substing of result_path, result_path and path are same
+                                    if ws in result_path:
+                                        # For num assert
+                                        if "average" in webrtc_statistics[ws] or \
+                                            "stddev" in webrtc_statistics[ws]:
+                                            average_value = webrtc_statistics[ws]["average"]
+                                            stddev_value = webrtc_statistics[ws]["stddev"]
+                                        # For string assert
+                                        if "value" in webrtc_statistics[ws]:
+                                            average_value = webrtc_statistics[ws]["value"]
+                                            stddev_value = 0.0
 
-                    # Initialize or create empty lists if they do not exist
-                    test_assert.setdefault("results", []).append(average_value)
-                    test_assert.setdefault("stdev", []).append(stddev_value)
-                    test_assert.setdefault("run_id", []).append(test_run_result["id"])
+                    if "results" not in test_assert:
+                        test_assert["results"] = []
+                    temp_results_list = test_assert["results"]
+                    avg = average_value
+                    temp_results_list.append(avg)
+                    test_assert["results"] = temp_results_list
 
-            png_file_path = os.path.join(output_directory, f"Test_{test_id}_success_rate.png")
+                    if "stdev" not in test_assert:
+                        test_assert["stdev"] = []
+                    temp_stdev_list = test_assert["stdev"]
+                    stdev = stddev_value
+                    temp_stdev_list.append(stdev)
+                    test_assert["stdev"] = temp_stdev_list
+
+                    if "run_id" not in test_assert:
+                        test_assert["run_id"] = []
+                    temp_run_id_list = test_assert["run_id"]
+                    temp_run_id_list.append(test_run_result["id"])
+                    test_assert["run_id"] = temp_run_id_list
+
+            png_file_path = os.path.join(output_directory, f"{test_id}_success_rate.png")
             generate_test_success_rate_histogram(test_id, success_rates, png_file_path)
 
             # If test has test asserts generate pdf and csv
             if test_asserts:
-                pdf_file_path = png_file_path = os.path.join(output_directory, f"Test_{test_id}_asserts.pdf")
+                pdf_file_path = png_file_path = os.path.join(output_directory, f"{test_id}_asserts.pdf")
                 avg_asserts_list = generate_asserts_plots_pdf(test_asserts, pdf_file_path)
 
                 df = pandas.DataFrame(avg_asserts_list)
-                csv_file_path = os.path.join(output_directory, f"Asserts_{test_id}.csv")
+                csv_file_path = os.path.join(output_directory, f"{test_id}_asserts.csv")
                 df.to_csv(csv_file_path)
 
             test_case_json = {
@@ -155,11 +194,8 @@ def main():
             test_cases_list.append(test_case_json)
 
         df1 = pandas.DataFrame(test_cases_list)
-        test_cases_csv_file_path = os.path.join(output_directory, "Test_cases.csv")
+        test_cases_csv_file_path = os.path.join(output_directory, "test_cases.csv")
         df1.to_csv(test_cases_csv_file_path, index=None)
 
     except ConnectionError:
         logger.error("Invalid parameters: Access denied")
-
-
-main()
