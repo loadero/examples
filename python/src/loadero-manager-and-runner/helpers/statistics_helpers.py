@@ -1,63 +1,27 @@
-import numpy
+import os
+import numpy as np
+import pandas
 
 from matplotlib import pyplot
 from matplotlib.backends.backend_pdf import PdfPages
 
-def generate_test_run_result_plot(test_run_ids, test_run_results, assert_path, stdev):
-    """Generate plot for asserts
-
-    Args:
-        test_run_ids (list): Test run ids - x axis values
-        test_run_results (list): Test run results - y axis values
-        assert_path (string): Assert path
-        stdev (list): Standard deviation values
-
-    Returns:
-        fig: Plot
-    """
-    # Remove None values from test_run_results for calculating the mean
-    filtered_test_run_results = [value for value in test_run_results if value is not None]
-
-    # Calculate the mean value and standard deviation
-    y_mean = numpy.mean(filtered_test_run_results)
-    mean_stdev1 = y_mean - numpy.array(stdev)
-    mean_stdev2 = y_mean + numpy.array(stdev)
-
-    # Generate the plot
-    fig, ax = pyplot.subplots()
-
-    x_values = range(1, len(test_run_ids) + 1)  # Test run id indexes start from 1
-    ax.plot(x_values, test_run_results, label="Average test run result value")
-    ax.plot(x_values, [y_mean] * len(x_values), label=f"Mean value={round(y_mean, 3)}", linestyle="--")
-
-    ax.set_title(f"Plot of assert {assert_path} over {len(test_run_ids)} runs")
-    ax.grid()
-    ax.legend(loc="upper right")
-    ax.set_xlabel("Run id index")
-    ax.set_ylabel("Assert metric")
-    ax.fill_between(x_values, mean_stdev1, mean_stdev2, alpha=0.1)
-
-    pyplot.setp(ax.get_xticklabels(), rotation=45)
-    pyplot.setp(ax.get_yticklabels(), rotation=45)
-
-    return fig
-
-def generate_test_success_rate_histogram(test_id, success_rates, png_file_path):
+def generate_test_success_rate_histogram(test_id, success_rates, output_directory):
     """Generate histogram for success rate
 
     Args:
         test_id (int): Test id
         success_rates (list): Average value of success rate for particular test id
-        png_file_path (str): The file path where the PNG will be saved
+        output_directory (str): The directory name where the png will be saved
 
     Returns:
         fig: Histogram
     """
+    png_file_path = os.path.join(output_directory, f"{test_id}_success_rate.png")
 
     fig, ax = pyplot.subplots()
 
     # Create the histogram with 10 bins and specify the range [0.0, 1.1]
-    bins = [i/10 for i in range(12)]  # Create 11 bins from 0.0 to 1.1
+    bins = 11  # Create 11 bins from 0.0 to 1.1
     ax.hist(success_rates, bins=bins, color="g")
 
     ax.set_title(f"Histogram of test {test_id} success rate over {len(success_rates)} runs")
@@ -70,61 +34,130 @@ def generate_test_success_rate_histogram(test_id, success_rates, png_file_path):
 
     return fig
 
-def generate_asserts_plots_pdf(test_asserts, pdf_file_path):
-    """Generate a PDF report with asserts plots
+def generate_test_run_result_plot(axis_values, assert_list, mean, avg_stddev_thresholds):
+    """Generate plot for asserts
 
     Args:
-        test_asserts (list): A list of test assertions, each represented as a dictionary
-        pdf_file_path (str): The file path where the PDF report will be saved
+        axis_values (list): Values to be represented on x and y axis
+        assert (list): List of assert path and current value
+        mean (number): Mean test run results value
+        avg_stddev_thresholds (list): Thresholds calculated against average standard deviation
 
     Returns:
-        list: A list of dictionaries, each containing summary information for the test asserts
+        fig: Plot
     """
-    avg_asserts_list = []
+    x_axis_values = axis_values[0]
+    y_axis_values = axis_values[1]
+    mean_stddev1 = avg_stddev_thresholds[0]
+    mean_stddev2 = avg_stddev_thresholds[1]
+
+    # Generate the plot
+    fig, ax = pyplot.subplots()
+
+    ax.plot(x_axis_values, y_axis_values,
+        label="Average test run result value",
+        color="green")
+
+    ax.plot(
+        x_axis_values, [mean] * len(x_axis_values),
+        label=f"Mean value={round(mean, 3)}",
+        color="orange",
+        linestyle="--")
+
+    ax.plot(x_axis_values, [assert_list[1]] * len(x_axis_values),
+        label=f"Current assert value={round(assert_list[1], 3)}")
+
+    ax.plot(x_axis_values, [mean_stddev1] * len(x_axis_values),
+        label=f"Min stddev threshold={mean_stddev1}",
+        color="blue")
+    ax.plot(x_axis_values, [mean_stddev2] * len(x_axis_values),
+        label=f"Max stddev threshold={mean_stddev2}",
+        color="blue")
+    ax.fill_between(x_axis_values, mean_stddev1, mean_stddev2, alpha=0.1)
+
+    ax.set_title(f"{len(x_axis_values)} runs")
+    ax.grid()
+    ax.legend(loc='upper right', fontsize=6)
+    ax.set_xlabel("Run id index")
+    ax.set_ylabel(f"{assert_list[0]}")
+
+    pyplot.setp(ax.get_xticklabels(), rotation=45)
+    pyplot.setp(ax.get_yticklabels(), rotation=45)
+
+    return fig
+
+def generate_asserts_statstics(test_id, test_asserts, output_directory):
+    """Generate asserts statistics data for pdf and csv files
+
+    Args:
+        test_id (int): Test id
+        test_asserts (list): A list of test asserts, each represented as a dictionary
+        output_directory (str): The directory name where the pdf and csv reports will be saved
+    """
+    pdf_file_path = os.path.join(output_directory, f"{test_id}_asserts.pdf")
+    csv_file_path = os.path.join(output_directory, f"{test_id}_asserts.csv")
 
     with PdfPages(pdf_file_path) as pp:
+        avg_asserts_list = []
         for test_assert in test_asserts:
             # Extract necessary data from the test_assert dictionary
-            test_run_ids = test_assert["run_id"][::-1]  # Reverse the run_id list
-            test_run_results = test_assert["results"][::-1]  # Reverse the results list
-            stdev = test_assert["stdev"][::-1]  # Reverse the stdev list
+            # Reverse the lists
+            test_run_ids = test_assert["run_id"][::-1]
+            test_run_results = test_assert["results"][::-1]
+            stddev = test_assert["stdev"][::-1]
             assert_path = test_assert["path"]
 
-            # Generate assert plot
-            fig = generate_test_run_result_plot(test_run_ids, test_run_results, assert_path, stdev)
-            pp.savefig(fig)
-
-            # Filter and organize data for assert calculations (remove None values)
+            # Filter and organize data (remove None values)
             final_test_run_results = []
             final_test_run_ids = []
             final_stddev = []
-            for r, run, s in zip(test_run_results, test_run_ids, stdev):
+            for r, run, s in zip(test_run_results, test_run_ids, stddev):
                 if isinstance(r, float):
                     final_test_run_results.append(r)
                     final_test_run_ids.append(run)
                     final_stddev.append(s)
 
             if final_test_run_results:
-                avg_value = round(sum(final_test_run_ids) / len(final_test_run_ids), 3)
-                avg_stdev = round(sum(final_stddev) / len(final_stddev), 3)
+                avg_assert_value = np.mean(final_test_run_results)
+                avg_stddev = np.mean(final_stddev)
 
-                if avg_value > 0:
-                    percentage = round((avg_stdev / avg_value) * 100, 3)
+                if avg_assert_value > 0:
+                    percentage = round((avg_stddev / avg_assert_value) * 100, 3)
                 else:
-                    percentage = 0
+                    percentage = 0.0
             else:
-                avg_value = test_assert.get("expected", 0.0)
-                avg_stdev = 0.0
+                avg_assert_value = float(test_assert.get("expected", 0.0))
+                avg_stddev = 0.0
                 percentage = 0.0
+
+            # Test run ids indexes
+            test_run_ids_indexes = [index + 1 for index in range(len(test_run_ids))]
+
+            # Thresholds
+            avg_stddev_thresholds = [
+                round(float(avg_assert_value) - float(avg_stddev), 3),
+                round(float(avg_assert_value) + float(avg_stddev), 3)]
+
+            # Generate assert plot
+            fig = generate_test_run_result_plot(
+                [test_run_ids_indexes, test_run_results],
+                [assert_path, float(test_assert.get("expected", ""))],
+                avg_assert_value,
+                avg_stddev_thresholds)
+
+            pp.savefig(fig)
 
             avg_assert_json = {
                 "Path": assert_path,
                 "Actual assert value": test_assert.get("expected", ""),
                 "Operator": test_assert.get("operator", ""),
-                "Average assert value": avg_value,
-                "Standard deviation": avg_stdev,
-                "Deviation percentage": percentage
+                "Proposed assert value\nagainst average standard deviation":
+                f"[{avg_stddev_thresholds[0]}, {avg_stddev_thresholds[1]}]",
+                "Average assert value": round(avg_assert_value, 3),
+                "Standard deviation": round(avg_stddev, 3),
+                "Deviation percentage": round(percentage, 3),
             }
             avg_asserts_list.append(avg_assert_json)
 
-    return avg_asserts_list
+        df = pandas.DataFrame(avg_asserts_list)
+        df.to_csv(csv_file_path)

@@ -6,7 +6,7 @@ import pandas
 from loadero.local_manager import LocalManager
 from loadero.logger import Logger
 from loadero.remote_manager import RemoteManager
-from helpers.statistics_helpers import generate_test_success_rate_histogram, generate_asserts_plots_pdf
+from helpers.statistics_helpers import generate_test_success_rate_histogram, generate_asserts_statstics
 
 def parse_arguments():
     """Parse command line arguments using argparse."""
@@ -26,8 +26,10 @@ if __name__ == "__main__":
     try:
         # Parse command line arguments
         args = parse_arguments()
+
         # Create a remote manager instance for accessing Loadero data
         remote_manager = RemoteManager(args.access_token, args.project_id)
+
         # Create a logger instance for logging information
         logger = Logger(logging.getLogger("loadero-statistics"), args.log_level.lower())
 
@@ -50,9 +52,8 @@ if __name__ == "__main__":
         if len(test_ids) == 0:
             raise ValueError('No test/s for statistics!')
 
-        test_run_results_list = []
         test_cases_list = []
-
+        test_run_results_list = []
         for test_id in test_ids:
             # Fetch test run results by test ID
             test_runs_results = remote_manager.read_all_test_runs_for_test(test_id, n, offset)
@@ -100,86 +101,59 @@ if __name__ == "__main__":
                 if participant_script_problems > 0:
                     script_problems += 1
 
+                # Process assert run results
                 for test_assert in test_asserts:
                     path = test_assert["path"]
                     average_value = None
                     stddev_value = 0.0
+
                     for result_assert in result_asserts:
                         result_path = result_assert["path"]
 
                         if result_path != path:
                             continue
+                        # Initialize average and stddev values for each metric type
+                        metric_average = None
+                        metric_stddev = 0.0
 
-                        # If test assert is in result asserts check if there are metrics,
-                        # if not avg=None stddev=0
-                        if "metrics" in result_statistics:
-                            metrics_statistics = result_statistics["metrics"]
+                        if "metrics" not in result_statistics:
+                            continue
+                        metrics_statistics = result_statistics["metrics"]
 
-                            # If test assert is in result asserts and there are metrics check
-                            # if there are machine metrics, if not avg=None stddev=0
-                            if "machine" in metrics_statistics:
-                                machine_statistics = metrics_statistics["machine"]
-                                for ms in machine_statistics:
-                                    # if ms path is substing of result_path, result_path and path are same
-                                    if ms in result_path:
-                                        # For num assert
-                                        if "average" in machine_statistics[ms] or \
-                                        "stddev" in machine_statistics[ms]:
-                                            average_value = machine_statistics[ms]["average"]
-                                            stddev_value = machine_statistics[ms]["stddev"]
-                                        # For string assert
-                                        if "value" in machine_statistics[ms]:
-                                            average_value = machine_statistics[ms]["value"]
-                                            stddev_value = 0.0
-                            # If test assert is in result asserts and there are metrics
-                            # check if there are webrtc metrics, if not avg=None stddev=0
-                            if "webrtc" in metrics_statistics:
-                                webrtc_statistics = metrics_statistics["webrtc"]
+                        for metric_type in ["machine", "webrtc"]:
+                            if metric_type not in metrics_statistics:
+                                continue
+                            metric_statistics = metrics_statistics[metric_type]
 
-                                for ws in webrtc_statistics:
-                                    # if ws path is substing of result_path, result_path and path are same
-                                    if ws in result_path:
-                                        # For num assert
-                                        if "average" in webrtc_statistics[ws] or \
-                                            "stddev" in webrtc_statistics[ws]:
-                                            average_value = webrtc_statistics[ws]["average"]
-                                            stddev_value = webrtc_statistics[ws]["stddev"]
-                                        # For string assert
-                                        if "value" in webrtc_statistics[ws]:
-                                            average_value = webrtc_statistics[ws]["value"]
-                                            stddev_value = 0.0
+                            for metric_key, metric_data in metric_statistics.items():
+                                if metric_key not in result_path:
+                                    continue
+                                if "average" in metric_data:
+                                    metric_average = metric_data["average"]
+                                if "stddev" in metric_data:
+                                    metric_stddev = metric_data["stddev"]
+                                if "value" in metric_data:
+                                    metric_average = metric_data["value"]
 
-                    if "results" not in test_assert:
-                        test_assert["results"] = []
-                    temp_results_list = test_assert["results"]
-                    avg = average_value
-                    temp_results_list.append(avg)
-                    test_assert["results"] = temp_results_list
+                        # Update average_value and stddev_value based on the metric values
+                        if metric_average is not None:
+                            average_value = metric_average
+                        if metric_stddev is not None:
+                            stddev_value = metric_stddev
 
-                    if "stdev" not in test_assert:
-                        test_assert["stdev"] = []
-                    temp_stdev_list = test_assert["stdev"]
-                    stdev = stddev_value
-                    temp_stdev_list.append(stdev)
-                    test_assert["stdev"] = temp_stdev_list
+                    # Append average_value to "results"
+                    test_assert.setdefault("results", []).append(average_value)
+                    # Append stddev_value to "stdev"
+                    test_assert.setdefault("stdev", []).append(stddev_value)
+                    # Append test_run_result["id"] to "run_id"
+                    test_assert.setdefault("run_id", []).append(test_run_result["id"])
 
-                    if "run_id" not in test_assert:
-                        test_assert["run_id"] = []
-                    temp_run_id_list = test_assert["run_id"]
-                    temp_run_id_list.append(test_run_result["id"])
-                    test_assert["run_id"] = temp_run_id_list
+            generate_test_success_rate_histogram(test_id, success_rates, output_directory)
 
-            png_file_path = os.path.join(output_directory, f"{test_id}_success_rate.png")
-            generate_test_success_rate_histogram(test_id, success_rates, png_file_path)
-
-            # If test has test asserts generate pdf and csv
-            if test_asserts:
-                pdf_file_path = png_file_path = os.path.join(output_directory, f"{test_id}_asserts.pdf")
-                avg_asserts_list = generate_asserts_plots_pdf(test_asserts, pdf_file_path)
-
-                df = pandas.DataFrame(avg_asserts_list)
-                csv_file_path = os.path.join(output_directory, f"{test_id}_asserts.csv")
-                df.to_csv(csv_file_path)
+            # If test has not test asserts continue
+            if not test_asserts:
+                continue
+            generate_asserts_statstics(test_id, test_asserts, output_directory)
 
             test_case_json = {
                 "Test id": test_id,
