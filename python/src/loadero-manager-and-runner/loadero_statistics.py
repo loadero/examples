@@ -69,8 +69,7 @@ if __name__ == "__main__":
 
             for test_run_result in test_runs_results:
                 logger.info(f"Test ({test_ids.index(test_id) + 1} out of {len(test_ids)}) id: {test_id} " +
-                            f"Test run ({test_runs_results.index(test_run_result) - offset + 2} out of {n}) " +
-                            f"id: {test_run_result['id']}")
+                            f"Test run ({test_runs_results.index(test_run_result) + 1} out of {n}) ")
 
                 # Check if there is a success_rate key
                 if "success_rate" in test_run_result:

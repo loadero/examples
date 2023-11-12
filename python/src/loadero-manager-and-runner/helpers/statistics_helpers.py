@@ -149,9 +149,9 @@ def generate_asserts_statstics(test_id, test_asserts, output_directory):
 
             avg_assert_json = {
                 "Path": assert_path,
-                "Actual assert value": test_assert.get("expected", ""),
+                "Expected assert value": test_assert.get("expected", ""),
                 "Operator": test_assert.get("operator", ""),
-                "Proposed assert value\nagainst average standard deviation":
+                "Proposed assert value against average standard deviation":
                 f"[{avg_stddev_thresholds[0]}, {avg_stddev_thresholds[1]}]",
                 "Average assert value": round(avg_assert_value, 3),
                 "Standard deviation": round(avg_stddev, 3),
