@@ -7,7 +7,7 @@ colorama==0.4.4
 configparser==5.0.1
 crayons==0.4.0
 execnet==1.8.0
-idna==2.10
+idna==3.7
 imutils==0.5.4
 iniconfig==1.1.1
 numpy
