@@ -11,7 +11,7 @@ idna==3.7
 imutils==0.5.4
 iniconfig==1.1.1
 numpy
-opencv-python==4.5.5.64
+opencv-python==4.8.1.78
 packaging==20.9
 pluggy==0.13.1
 pure-python-adb==0.3.0.dev0
