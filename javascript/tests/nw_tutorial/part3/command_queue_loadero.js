@@ -11,7 +11,8 @@ client => {
         .click('#searchbox_input')
         .setValue('#searchbox_input', text)
         .getValue('#searchbox_input', ({ value }) => console.log(value))
-        .clearValue('#searchbox_input') // clears input field
+        .click('#searchbox_input')
+        .setValue('#searchbox_input', '') // clears input field
         .perform(() => client.setValue('#searchbox_input', text))
         .getValue('#searchbox_input', ({ value }) => console.log(value));
 
