@@ -12,7 +12,7 @@ module.exports = {
         const selectors = {
             landing: {
                 container: '.application-main',
-                signInButton: '[href="/login"]'
+                signInButton: '.HeaderMenu-link--sign-in'
             },
             signIn: {
                 container: '#login',
