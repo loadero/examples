@@ -8,11 +8,13 @@ client => {
         .perform(() => {
             text = 'first'; // assigns 'first' to text
         })
-        .setValue('#search_form_input_homepage', text)
-        .getValue('#search_form_input_homepage', ({ value }) => console.log(value))
-        .clearValue('#search_form_input_homepage') // clears input field
-        .perform(() => client.setValue('#search_form_input_homepage', text))
-        .getValue('#search_form_input_homepage', ({ value }) => console.log(value));
+        .click('#searchbox_input')
+        .setValue('#searchbox_input', text)
+        .getValue('#searchbox_input', ({ value }) => console.log(value))
+        .click('#searchbox_input')
+        .setValue('#searchbox_input', '') // clears input field
+        .perform(() => client.setValue('#searchbox_input', text))
+        .getValue('#searchbox_input', ({ value }) => console.log(value));
 
     console.log('second');
 }

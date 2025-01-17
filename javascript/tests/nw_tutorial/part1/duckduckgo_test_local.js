@@ -4,11 +4,12 @@ module.exports = {
     test: client => {
         client
             .url('https://duckduckgo.com/')
-            .waitForElementVisible('#content_homepage', 10 * 1000)
-            .setValue('#search_form_input_homepage', 'Nightwatch.js')
-            .setValue('#search_form_input_homepage', client.Keys.ENTER)
-            .assert.containsText('#r1-0 .result__title', 'Nightwatch.js')
-            .click('#r1-0 .result__title')
+            .waitForElementVisible('[data-testid=hero]', 10 * 1000)
+            .click('#searchbox_input')
+            .setValue('#searchbox_input', ['Nightwatch.js', client.Keys.ENTER])
+            .waitForElementVisible('#r1-0 p:has(+ a)')
+            .assert.containsText('#r1-0 p:has(+ a)', 'Nightwatch.js')
+            .click('#r1-0 p:has(+ a)')
             .saveScreenshot('NightwatchJS.png')
             .pause(5 * 1000);
     }
